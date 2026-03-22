@@ -57,3 +57,16 @@ Fullstack testing platform validating a professional stack: monorepo + GraphQL +
 
 - **RAG (LanceDB):** Use `npm run query` before massive reads. Run `npm run ingest` after significant doc changes.
 - **E2E & CI/CD:** High priority once core is stable.
+
+## 7. Project Management (GitHub Issues + MCP)
+
+- **Board:** https://github.com/users/VIXXENT/projects/2
+- **MCP:** GitHub MCP configured in `.mcp.json`. Use `mcp__github__*` tools to manage issues, PRs, and comments.
+- **Workflow per session:**
+  1. Check open issues (`mcp__github__list_issues`) to see prioritized backlog.
+  2. Work on highest-priority unblocked issue.
+  3. Create a branch per issue: `feature/#N-description` or `fix/#N-description`.
+  4. Comment progress on the issue and check off completed checklist items.
+  5. On completion: create PR linked to issue, close issue when merged.
+- **Labels:** `epic:{auth,frontend,backend,testing,devops,dx}` | `priority:{critical,high,medium,low}` | `type:{bug,feature,tech-debt,infra}`
+- **New work:** If unplanned work is discovered, create a new issue with appropriate labels before starting.

@@ -59,6 +59,7 @@ _archive/
 # Claude-specific
 .claude/
 .agents/
+.mcp.json
 
 # Test artifacts
 test-results/
