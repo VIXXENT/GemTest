@@ -53,12 +53,51 @@ Fullstack testing platform validating a professional stack: monorepo + GraphQL +
 - Custom runner in `scripts/dev.mjs` intercepts stdout/stderr with ANSI stripping.
 - Run `npm run lint -- --fix` after every intervention.
 
-## 6. Context & RAG
+## 6. Context Window Protection (context-mode)
+
+context-mode MCP tools are available to keep raw data in sandboxed subprocesses. These rules protect the context window from flooding during research and exploration.
+
+### Tool routing hierarchy
+
+1. **GATHER**: `ctx_batch_execute(commands, queries)` — Primary research tool. Runs multiple commands, auto-indexes output, returns search results. ONE call replaces many individual steps.
+2. **FOLLOW-UP**: `ctx_search(queries: ["q1", "q2", ...])` — Query indexed content from prior commands. Pass ALL questions as array in ONE call.
+3. **PROCESSING**: `ctx_execute(language, code)` | `ctx_execute_file(path, language, code)` — Sandbox execution for analysis. Only stdout enters context.
+4. **WEB**: `ctx_fetch_and_index(url, source)` then `ctx_search(queries)` — Fetch, chunk, index, query. Raw HTML never enters context.
+5. **INDEX**: `ctx_index(content, source)` — Store content in FTS5 knowledge base for later search.
+
+### When to use context-mode vs built-in tools
+
+| Task | Use context-mode | Use built-in |
+|------|------------------|--------------|
+| Read file to **edit** it | — | `Read` + `Edit` |
+| Read file to **analyze/explore** | `ctx_execute_file` | — |
+| Run short command (git, ls, npm) | — | `Bash` |
+| Run command with large output (logs, tests) | `ctx_execute` (shell) | — |
+| Research multiple files/dirs at once | `ctx_batch_execute` | — |
+| Fetch web page/docs | `ctx_fetch_and_index` | — |
+| Search codebase (targeted, <3 queries) | — | `Grep` / `Glob` |
+| Search codebase (broad, multi-round) | `ctx_batch_execute` | — |
+
+### Blocked patterns
+
+- **curl/wget in Bash**: Use `ctx_execute` or `ctx_fetch_and_index` instead.
+- **WebFetch**: Use `ctx_fetch_and_index` then `ctx_search` instead.
+- **Bash for commands producing >50 lines**: Use `ctx_execute(language: "shell", code: "...")`.
+
+### Diagnostics
+
+| Command | Action |
+|---------|--------|
+| `ctx stats` | Show context savings and session statistics |
+| `ctx doctor` | Diagnose installation (runtimes, FTS5, versions) |
+| `ctx upgrade` | Update context-mode to latest version |
+
+## 7. Context & RAG (Legacy)
 
 - **RAG (LanceDB):** Use `npm run query` before massive reads. Run `npm run ingest` after significant doc changes.
 - **E2E & CI/CD:** High priority once core is stable.
 
-## 7. Project Management (GitHub Issues + MCP)
+## 8. Project Management (GitHub Issues + MCP)
 
 - **Board:** https://github.com/users/VIXXENT/projects/2
 - **MCP:** GitHub MCP configured in `.mcp.json`. Use `mcp__github__*` tools to manage issues, PRs, and comments.
