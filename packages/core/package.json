@@ -6,8 +6,8 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "dependencies": {
-    "@gemtest/schema": "workspace:*",
-    "drizzle-orm": "^0.45.1"
+    "@gemtest/domain": "workspace:*",
+    "neverthrow": "^8.0.0"
   },
   "devDependencies": {
     "@gemtest/config-ts": "workspace:*",
