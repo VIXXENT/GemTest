@@ -11,7 +11,8 @@ import type { DomainError } from '../errors/domain-error.js'
  * (which enforces RFC-5321 format) can be used as Email — plain strings are
  * rejected at compile time.
  */
-type Brand<T, B> = T & { readonly __brand: B }
+import type { Brand } from '../types/brand.js'
+
 export type Email = Brand<string, 'Email'>
 
 /** Internal Zod schema used to validate raw email strings. */

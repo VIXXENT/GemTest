@@ -5,6 +5,9 @@
  * No infrastructure dependencies (no DB, no HTTP, no framework).
  */
 
+// Utility types
+export type { Brand } from './types/brand.js'
+
 // Entities
 export type { UserEntity } from './entities/user.js'
 

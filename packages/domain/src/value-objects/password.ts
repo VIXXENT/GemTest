@@ -12,7 +12,8 @@ import type { DomainError } from '../errors/domain-error.js'
  * Actual hashing happens in the infrastructure layer; the domain only
  * enforces structural requirements.
  */
-type Brand<T, B> = T & { readonly __brand: B }
+import type { Brand } from '../types/brand.js'
+
 export type Password = Brand<string, 'Password'>
 
 /** Minimum password length enforced by domain rules. */

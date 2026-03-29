@@ -1,6 +1,4 @@
-import { ok } from 'neverthrow'
-import type { Result } from 'neverthrow'
-import type { DomainError } from '../errors/domain-error.js'
+import type { Brand } from '../types/brand.js'
 
 /**
  * Branded type for a user identifier.
@@ -8,13 +6,7 @@ import type { DomainError } from '../errors/domain-error.js'
  * Why: Using a brand prevents accidental mixing of plain strings with
  * validated UserId values at the type level, with zero runtime overhead.
  */
-type Brand<T, B> = T & { readonly __brand: B }
 export type UserId = Brand<string, 'UserId'>
-
-/** Parameters for createUserId. */
-type CreateUserIdParams = {
-  readonly value: string
-}
 
 /**
  * Wraps a string as a UserId branded type without additional validation.
@@ -23,10 +15,7 @@ type CreateUserIdParams = {
  * The domain trusts them as-is but brands them so they cannot be confused with
  * arbitrary strings at compile time.
  *
- * @param params - Object containing the raw string value.
- * @returns Ok<UserId, never> — always succeeds since no validation is needed.
+ * @param value - The raw string value to brand as UserId.
+ * @returns A branded UserId value.
  */
-export const createUserId = (params: CreateUserIdParams): Result<UserId, DomainError> => {
-  const { value } = params
-  return ok(value as UserId)
-}
+export const createUserId = (value: string): UserId => value as UserId
