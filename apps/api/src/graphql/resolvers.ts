@@ -1,171 +1,163 @@
-import { db } from '../db/index.js'
-import { users } from '../db/schema.js'
-import { eq } from 'drizzle-orm'
-import { type User, type CreateUserInput } from '@gemtest/schema'
-import { type ApolloServer } from '@apollo/server'
-import * as argon2 from 'argon2'
-import { fromPromise, type Result } from 'neverthrow'
-import { dbError, validationError, type AppError } from '../errors.js'
+import { container } from '../container.js'
 import { GraphQLError } from 'graphql'
+import type { AppError } from '@gemtest/core'
+import type { UserEntity } from '@gemtest/domain'
+import type { ApolloServer } from '@apollo/server'
 
-type MapToGraphQLErrorFn = (error: AppError) => never
+// ---------------------------------------------------------------------------
+// GraphQL response shape
+// ---------------------------------------------------------------------------
 
 /**
- * Maps our domain errors to GraphQLError for Apollo Server.
- * @param error - The AppError from our domain logic.
- * @throws GraphQLError to be caught by the Apollo Server.
+ * Plain object representation of a User for GraphQL responses.
+ *
+ * Why: `UserEntity` uses branded types (UserId, Email) and lacks optional
+ * fields the GraphQL schema expects (emailVerified, image). This type bridges
+ * the domain model to the wire format without widening or falsifying types.
  */
-const mapToGraphQLError: MapToGraphQLErrorFn = (error: AppError): never => {
-  const code: string = error._tag.toUpperCase()
+type UserGraphQL = {
+  readonly id: number
+  readonly name: string
+  readonly email: string
+  readonly emailVerified: string | null
+  readonly image: string | null
+  readonly role: string
+  readonly createdAt: string
+}
+
+// ---------------------------------------------------------------------------
+// Resolver arg types
+// ---------------------------------------------------------------------------
+
+/** Resolver tuple for queries/mutations with no arguments: [parent]. */
+type NoArgs = [unknown]
+
+/** Resolver tuple for the `user(id: Int!)` query: [parent, args]. */
+type GetUserParams = [unknown, { readonly id: number }]
+
+/** Args shape for the `createUser` mutation. */
+type CreateUserArgs = {
+  readonly name: string
+  readonly email: string
+  readonly password: string
+}
+
+/** Resolver tuple for the `createUser` mutation: [parent, args]. */
+type CreateUserParams = [unknown, CreateUserArgs]
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Maps a domain `UserEntity` to the plain `UserGraphQL` response shape.
+ *
+ * Why: `UserEntity.id` is a branded `UserId` (string), but the GraphQL schema
+ * declares `id: Int!`. Since the DB uses auto-increment integers stored as
+ * strings in the branded type, `parseInt` is safe here.
+ * `emailVerified` and `image` are not part of the domain entity so they are
+ * returned as null (matching the nullable schema fields).
+ *
+ * @param entity - The domain user entity returned by a use case.
+ * @returns A plain object safe to serialise as a GraphQL User response.
+ */
+const toGraphQL: (entity: UserEntity) => UserGraphQL = (entity) => ({
+  id: parseInt(entity.id, 10),
+  name: entity.name,
+  email: entity.email,
+  emailVerified: null,
+  image: null,
+  role: entity.role,
+  createdAt: entity.createdAt.toISOString(),
+})
+
+/**
+ * Maps an `AppError` to a thrown `GraphQLError`.
+ *
+ * Why: Apollo Server catches `GraphQLError` and forwards its `extensions.code`
+ * to the client. By mapping our discriminated union here we keep error
+ * semantics consistent across the entire API surface.
+ *
+ * @param error - The application-layer error from a use case result.
+ * @returns never — always throws.
+ */
+const mapToGraphQLError: (error: AppError) => never = (error) => {
+  const code: string = error.tag.toUpperCase()
   throw new GraphQLError(error.message, {
-    extensions: { code, ...error },
+    extensions: { code },
   })
 }
 
+// ---------------------------------------------------------------------------
+// Resolvers
+// ---------------------------------------------------------------------------
+
 /**
- * Common structure for GraphQL Resolver arguments.
+ * Type extraction for the resolvers object accepted by `ApolloServer`.
+ * Avoids manual re-definition of the Apollo config shape.
  */
-type ResolverArgs<T> = [unknown, T, unknown, unknown];
-
-export type GetUserArgs = {
-  readonly id: number
-}
+type ResolversType = ConstructorParameters<typeof ApolloServer>[0]['resolvers']
 
 /**
- * Type Extraction for the resolvers structure.
- */
-type ResolversType = ConstructorParameters<typeof ApolloServer>[0]['resolvers'];
-
-/**
- * GraphQL resolvers using neverthrow for error handling.
+ * GraphQL resolvers — thin primary adapter layer.
+ *
+ * Responsibilities:
+ *   1. Parse GraphQL arguments into use-case input.
+ *   2. Delegate to the DI container (use cases).
+ *   3. Map domain entities to GraphQL response shapes.
+ *   4. Map AppError to GraphQLError on failure.
+ *
+ * No business logic lives here. No direct DB or argon2 imports.
  */
 export const resolvers: ResolversType = {
   Query: {
     /**
-     * Basic health check to verify API status.
-     * @returns A string indicating the API is alive.
+     * Health check — verifies the API process is reachable.
+     * @returns Static confirmation string.
      */
-    health: (): string => 'OK - API is alive',
+    health: (..._params: NoArgs): string => 'OK - API is alive',
 
     /**
-     * Retrieves all users from the database.
-     *
-     * This query fetches the complete list of registered users. It uses a linear
-     * flow with neverthrow to handle potential database connectivity issues.
-     *
-     * @returns A promise resolving to a list of User entities.
-     * @throws GraphQLError if the database operation fails.
+     * Returns all registered users.
+     * @returns Array of serialisable user objects.
      */
-    users: async (): Promise<User[]> => {
-      const selectResult = await fromPromise(
-        db.select().from(users),
-        (e: unknown): AppError => dbError({
-          message: 'Failed to fetch the list of users from the database',
-          cause: e,
-        }),
-      )
-
-      if (selectResult.isErr()) {
-        return mapToGraphQLError(selectResult.error)
-      }
-
-      return selectResult.value as User[]
+    users: async (..._params: NoArgs): Promise<UserGraphQL[]> => {
+      const result: Awaited<ReturnType<typeof container.listUsers>> = await container.listUsers()
+      if (result.isErr()) { return mapToGraphQLError(result.error) }
+      return result.value.map(toGraphQL)
     },
 
     /**
-     * Retrieves a single user by their unique identifier.
-     *
-     * @param params - Standard GraphQL resolver arguments [parent, args, context, info].
-     * @returns A promise resolving to the User entity or null if not found.
-     * @throws GraphQLError if the database operation fails.
+     * Returns a single user by numeric ID, or null if not found.
+     * @param params - Resolver tuple [parent, args] where args.id is the user's numeric ID.
+     * @returns The user object or null.
      */
-    user: async (...params: ResolverArgs<GetUserArgs>): Promise<User | null> => {
-      const args: GetUserArgs = params[1]
-      const { id }: GetUserArgs = args
-
-      const selectResult = await fromPromise(
-        db.select().from(users).where(eq(users.id, id)),
-        (e: unknown): AppError => dbError({
-          message: `Failed to fetch user with id ${id} from the database`,
-          cause: e,
-        }),
-      )
-
-      if (selectResult.isErr()) {
-        return mapToGraphQLError(selectResult.error)
-      }
-
-      const results: User[] = selectResult.value as User[]
-      return results[0] || null
+    user: async (...params: GetUserParams): Promise<UserGraphQL | null> => {
+      const args: GetUserParams[1] = params[1]
+      const result: Awaited<ReturnType<typeof container.getUser>> =
+        await container.getUser({ id: String(args.id) })
+      if (result.isErr()) { return mapToGraphQLError(result.error) }
+      const entity: UserEntity | null = result.value
+      return entity === null ? null : toGraphQL(entity)
     },
   },
+
   Mutation: {
     /**
-     * Creates a new user with a hashed password.
-     *
-     * This resolver handles the user registration process, validating the input,
-     * hashing the password using argon2, and persisting the record in the database.
-     * It uses a linear flow with neverthrow for robust error handling.
-     *
-     * @param params - Standard GraphQL resolver arguments [parent, args, context, info].
-     * @returns A promise resolving to the newly created User entity.
-     * @throws GraphQLError if any step of the process fails.
+     * Creates a new user account.
+     * @param params - Resolver tuple [parent, args] where args contains user data.
+     * @returns The newly created user object.
      */
-    createUser: async (...params: ResolverArgs<CreateUserInput>): Promise<User> => {
-      const args: CreateUserInput = params[1]
-      const { name, email, password } = args
-
-      // 1. Validate password existence
-      if (!password) {
-        return mapToGraphQLError(validationError({
-          field: 'password',
-          message: 'Password is required to create an account',
-        }))
-      }
-
-      // 2. Hash the user password
-      const hashResult: Result<string, AppError> = await fromPromise(
-        argon2.hash(password),
-        (e: unknown): AppError => dbError({
-          message: 'Failed to securely hash the user password',
-          cause: e,
-        }),
-      )
-      if (hashResult.isErr()) {
-        return mapToGraphQLError(hashResult.error)
-      }
-      const hashedPassword: string = hashResult.value
-
-      // 3. Persist the user in the database
-      const insertResult: Result<unknown[], AppError> = await fromPromise(
-        db.insert(users).values({
-          name,
-          email,
-          password: hashedPassword,
-          image: '',
-          role: 'user',
-          createdAt: new Date(),
-        }).returning(),
-        (e: unknown): AppError => dbError({
-          message: 'Failed to persist the user record in the database',
-          cause: e,
-        }),
-      )
-      if (insertResult.isErr()) {
-        return mapToGraphQLError(insertResult.error)
-      }
-
-      const insertedUsers: unknown[] = insertResult.value
-      const newUser: unknown = insertedUsers[0]
-
-      // 4. Validate insertion result
-      if (!newUser) {
-        return mapToGraphQLError(dbError({
-          message: 'User insertion succeeded but returned no data',
-        }))
-      }
-
-      return newUser as User
+    createUser: async (...params: CreateUserParams): Promise<UserGraphQL> => {
+      const args: CreateUserParams[1] = params[1]
+      const result: Awaited<ReturnType<typeof container.createUser>> =
+        await container.createUser({
+          name: args.name,
+          email: args.email,
+          password: args.password,
+        })
+      if (result.isErr()) { return mapToGraphQLError(result.error) }
+      return toGraphQL(result.value)
     },
   },
 }
