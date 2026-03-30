@@ -15,7 +15,11 @@ export { infrastructureError, validationError } from './errors/app-error.js'
 
 // Repository ports
 export type { IRepository, UpdateParams } from './repositories/base.repository.js'
-export type { IUserRepository, CreateUserInput } from './repositories/user.repository.js'
+export type {
+  IUserRepository,
+  CreateUserInput,
+  UserWithPassword,
+} from './repositories/user.repository.js'
 
 // Service ports
 export type { IEmailService, SendVerificationParams } from './services/email.service.js'

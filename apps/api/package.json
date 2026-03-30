@@ -12,6 +12,8 @@
   "dependencies": {
     "@apollo/server": "^4.10.0",
     "@auth/core": "^0.34.3",
+    "@gemtest/core": "workspace:*",
+    "@gemtest/domain": "workspace:*",
     "@gemtest/schema": "workspace:*",
     "@libsql/client": "latest",
     "argon2": "^0.44.0",
