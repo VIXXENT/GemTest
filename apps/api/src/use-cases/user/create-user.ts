@@ -1,8 +1,7 @@
 import { errAsync } from 'neverthrow'
 import type { ResultAsync } from 'neverthrow'
-import type { Ok } from 'neverthrow'
 import { createEmail, createPassword, userAlreadyExists } from '@gemtest/domain'
-import type { UserEntity, Email, Password, DomainError } from '@gemtest/domain'
+import type { UserEntity } from '@gemtest/domain'
 import type { AppError, IUserRepository, IPasswordService } from '@gemtest/core'
 import { validationError } from '@gemtest/core'
 import { CreateUserInputSchema } from '@gemtest/schema'
@@ -59,14 +58,14 @@ export const createUserUseCase: (
     }
 
     // 2. Construct domain Email value object
-    const emailResult: Ok<Email, DomainError> | ReturnType<typeof createEmail> =
+    const emailResult: ReturnType<typeof createEmail> =
       createEmail({ value: email })
     if (emailResult.isErr()) {
       return errAsync(emailResult.error)
     }
 
     // 3. Construct domain Password value object
-    const passwordResult: Ok<Password, DomainError> | ReturnType<typeof createPassword> =
+    const passwordResult: ReturnType<typeof createPassword> =
       createPassword({ value: password })
     if (passwordResult.isErr()) {
       return errAsync(passwordResult.error)

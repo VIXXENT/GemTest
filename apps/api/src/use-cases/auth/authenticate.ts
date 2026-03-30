@@ -1,8 +1,7 @@
 import { errAsync, okAsync } from 'neverthrow'
 import type { ResultAsync } from 'neverthrow'
 import { createEmail, userNotFound } from '@gemtest/domain'
-import type { Email, DomainError, UserEntity } from '@gemtest/domain'
-import type { Ok } from 'neverthrow'
+import type { UserEntity } from '@gemtest/domain'
 import type {
   AppError,
   IUserRepository,
@@ -10,6 +9,7 @@ import type {
   ITokenService,
 } from '@gemtest/core'
 import { validationError } from '@gemtest/core'
+import { LoginInputSchema } from '@gemtest/schema'
 import type { LoginInput } from '@gemtest/schema'
 
 // ---------------------------------------------------------------------------
@@ -74,8 +74,18 @@ export const authenticateUseCase: (
   return (params) => {
     const { email, password } = params
 
+    // 0. Validate raw input shape with Zod
+    const parseResult: ReturnType<typeof LoginInputSchema.safeParse> =
+      LoginInputSchema.safeParse({ email, password })
+
+    if (!parseResult.success) {
+      const message: string =
+        parseResult.error.issues[0]?.message ?? 'Invalid input'
+      return errAsync(validationError({ message }))
+    }
+
     // 1. Construct domain Email value object (validates format)
-    const emailResult: Ok<Email, DomainError> | ReturnType<typeof createEmail> =
+    const emailResult: ReturnType<typeof createEmail> =
       createEmail({ value: email })
     if (emailResult.isErr()) {
       return errAsync(emailResult.error)
