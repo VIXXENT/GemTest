@@ -59,34 +59,40 @@ export type AppError = DomainError | InfrastructureError | ValidationError
 // Constructor helpers
 // ---------------------------------------------------------------------------
 
+/** Parameters for {@link infrastructureError}. */
+type InfrastructureErrorParams = {
+  readonly message: string
+  readonly cause?: unknown
+}
+
 /**
  * Creates an `InfrastructureError`.
  *
- * @param message - Human-readable description of the infrastructure failure.
- * @param cause   - Optional original error caught from the underlying layer.
+ * @param params - Object containing message and optional cause.
  * @returns An `InfrastructureError` value (never thrown).
  */
-export const infrastructureError = (
-  message: string,
-  cause?: unknown,
-): InfrastructureError => ({
-  tag: 'InfrastructureError',
-  message,
-  cause,
-})
+export const infrastructureError: (
+  params: InfrastructureErrorParams,
+) => InfrastructureError = (params) => {
+  const { message, cause } = params
+  return { tag: 'InfrastructureError', message, cause }
+}
+
+/** Parameters for {@link validationError}. */
+type ValidationErrorParams = {
+  readonly message: string
+  readonly field?: string
+}
 
 /**
  * Creates a `ValidationError`.
  *
- * @param message - Human-readable description of the validation failure.
- * @param field   - Optional name of the input field that failed validation.
+ * @param params - Object containing message and optional field name.
  * @returns A `ValidationError` value (never thrown).
  */
-export const validationError = (
-  message: string,
-  field?: string,
-): ValidationError => ({
-  tag: 'ValidationError',
-  message,
-  field,
-})
+export const validationError: (
+  params: ValidationErrorParams,
+) => ValidationError = (params) => {
+  const { message, field } = params
+  return { tag: 'ValidationError', message, field }
+}

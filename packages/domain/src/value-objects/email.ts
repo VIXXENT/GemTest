@@ -16,6 +16,7 @@ import type { Brand } from '../types/brand.js'
 export type Email = Brand<string, 'Email'>
 
 /** Internal Zod schema used to validate raw email strings. */
+// eslint-disable-next-line @typescript-eslint/typedef
 const EmailSchema = z.string().email('Invalid email address')
 
 /** Parameters for createEmail. */
@@ -33,12 +34,12 @@ type CreateEmailParams = {
  * @returns Ok<Email> if the value passes RFC-5321 validation,
  *          Err<InvalidEmail> otherwise.
  */
-export const createEmail = (params: CreateEmailParams): Result<Email, DomainError> => {
+export const createEmail: (params: CreateEmailParams) => Result<Email, DomainError> = (params) => {
   const { value } = params
-  const result = EmailSchema.safeParse(value)
+  const result: ReturnType<typeof EmailSchema.safeParse> = EmailSchema.safeParse(value)
 
   if (!result.success) {
-    const message = result.error.issues[0]?.message ?? 'Invalid email'
+    const message: string = result.error.issues[0]?.message ?? 'Invalid email'
     return err(invalidEmail(message))
   }
 

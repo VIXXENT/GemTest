@@ -9,6 +9,7 @@ import { z } from 'zod'
  *
  * @see {@link UpdateUserInput} for the inferred TypeScript type.
  */
+// eslint-disable-next-line @typescript-eslint/typedef
 export const UpdateUserInputSchema = z.object({
   id: z.number().int().positive('User id must be a positive integer'),
   name: z.string().min(3, 'Name must be at least 3 characters').optional(),

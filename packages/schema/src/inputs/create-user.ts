@@ -9,6 +9,7 @@ import { z } from 'zod'
  *
  * @see {@link CreateUserInput} for the inferred TypeScript type.
  */
+// eslint-disable-next-line @typescript-eslint/typedef
 export const CreateUserInputSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters'),
   email: z.string().email('Invalid email'),

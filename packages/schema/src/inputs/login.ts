@@ -9,6 +9,7 @@ import { z } from 'zod'
  *
  * @see {@link LoginInput} for the inferred TypeScript type.
  */
+// eslint-disable-next-line @typescript-eslint/typedef
 export const LoginInputSchema = z.object({
   email: z.string().email('Invalid email'),
   password: z.string().min(1, 'Password is required'),

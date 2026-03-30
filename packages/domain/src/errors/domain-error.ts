@@ -56,7 +56,7 @@ export type DomainError =
  * @param message - Human-readable description of the validation failure.
  * @returns An InvalidEmail error value.
  */
-export const invalidEmail = (message: string): InvalidEmail => ({
+export const invalidEmail: (message: string) => InvalidEmail = (message) => ({
   tag: 'InvalidEmail',
   message,
 })
@@ -66,7 +66,7 @@ export const invalidEmail = (message: string): InvalidEmail => ({
  * @param message - Human-readable description of the validation failure.
  * @returns An InvalidPassword error value.
  */
-export const invalidPassword = (message: string): InvalidPassword => ({
+export const invalidPassword: (message: string) => InvalidPassword = (message) => ({
   tag: 'InvalidPassword',
   message,
 })
@@ -76,7 +76,7 @@ export const invalidPassword = (message: string): InvalidPassword => ({
  * @param message - Human-readable description of the weakness.
  * @returns A WeakPassword error value.
  */
-export const weakPassword = (message: string): WeakPassword => ({
+export const weakPassword: (message: string) => WeakPassword = (message) => ({
   tag: 'WeakPassword',
   message,
 })
@@ -86,7 +86,7 @@ export const weakPassword = (message: string): WeakPassword => ({
  * @param userId - The identifier that was not found.
  * @returns A UserNotFound error value.
  */
-export const userNotFound = (userId: string): UserNotFound => ({
+export const userNotFound: (userId: string) => UserNotFound = (userId) => ({
   tag: 'UserNotFound',
   userId,
 })
@@ -96,7 +96,7 @@ export const userNotFound = (userId: string): UserNotFound => ({
  * @param email - The email address that already exists.
  * @returns A UserAlreadyExists error value.
  */
-export const userAlreadyExists = (email: string): UserAlreadyExists => ({
+export const userAlreadyExists: (email: string) => UserAlreadyExists = (email) => ({
   tag: 'UserAlreadyExists',
   email,
 })

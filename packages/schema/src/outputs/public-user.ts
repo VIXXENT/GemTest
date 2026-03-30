@@ -10,6 +10,7 @@ import { UserSchema } from '../entities/user.js'
  *
  * @see {@link PublicUser} for the inferred TypeScript type.
  */
+// eslint-disable-next-line @typescript-eslint/typedef
 export const PublicUserSchema = UserSchema.pick({
   id: true,
   name: true,

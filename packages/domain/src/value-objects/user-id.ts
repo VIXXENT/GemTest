@@ -18,4 +18,4 @@ export type UserId = Brand<string, 'UserId'>
  * @param value - The raw string value to brand as UserId.
  * @returns A branded UserId value.
  */
-export const createUserId = (value: string): UserId => value as UserId
+export const createUserId: (value: string) => UserId = (value) => value as UserId

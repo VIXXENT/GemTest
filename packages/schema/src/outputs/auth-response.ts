@@ -10,6 +10,7 @@ import { PublicUserSchema } from './public-user.js'
  *
  * @see {@link AuthResponse} for the inferred TypeScript type.
  */
+// eslint-disable-next-line @typescript-eslint/typedef
 export const AuthResponseSchema = z.object({
   token: z.string(),
   user: PublicUserSchema,

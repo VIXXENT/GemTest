@@ -15,7 +15,7 @@ import {
   TestEnvSchema,
   type AnyEnvSchema,
   type EnvConfig,
-} from './schema.js';
+} from './schema.js'
 
 /**
  * Selects the Zod schema matching the current NODE_ENV.
@@ -23,11 +23,11 @@ import {
  * @param nodeEnv - Raw NODE_ENV string from process.env (may be undefined)
  * @returns The appropriate Zod schema for validation
  */
-const resolveSchema = (nodeEnv: string | undefined): AnyEnvSchema => {
-  if (nodeEnv === 'production') return ProductionEnvSchema;
-  if (nodeEnv === 'test') return TestEnvSchema;
-  return BaseEnvSchema;
-};
+const resolveSchema: (nodeEnv: string | undefined) => AnyEnvSchema = (nodeEnv) => {
+  if (nodeEnv === 'production') {return ProductionEnvSchema}
+  if (nodeEnv === 'test') {return TestEnvSchema}
+  return BaseEnvSchema
+}
 
 /**
  * Formats a ZodError into a human-readable list of field errors.
@@ -35,12 +35,12 @@ const resolveSchema = (nodeEnv: string | undefined): AnyEnvSchema => {
  * @param issues - Array of Zod validation issues
  * @returns A multi-line string listing each invalid field and its message
  */
-const formatZodIssues = (
-  issues: Array<{ path: Array<string | number>; message: string }>
-): string =>
+type ZodIssueShape = { path: Array<string | number>; message: string }
+
+const formatZodIssues: (issues: Array<ZodIssueShape>) => string = (issues) =>
   issues
     .map(({ path, message }) => `  - ${path.join('.') || 'root'}: ${message}`)
-    .join('\n');
+    .join('\n')
 
 /**
  * Validates process.env against the schema for the current NODE_ENV.
@@ -57,19 +57,19 @@ const formatZodIssues = (
  * console.log(config.PORT); // 4000
  * ```
  */
-export const loadEnv = (): EnvConfig => {
-  const rawNodeEnv = process.env['NODE_ENV'];
-  const schema = resolveSchema(rawNodeEnv);
+export const loadEnv: () => EnvConfig = () => {
+  const rawNodeEnv: string | undefined = process.env['NODE_ENV']
+  const schema: AnyEnvSchema = resolveSchema(rawNodeEnv)
 
-  const result = schema.safeParse(process.env);
+  const result: ReturnType<typeof schema.safeParse> = schema.safeParse(process.env)
 
   if (!result.success) {
-    const formatted = formatZodIssues(result.error.issues);
+    const formatted: string = formatZodIssues(result.error.issues)
     throw new Error(
       `[config-env] Invalid environment variables:\n${formatted}\n` +
-        `NODE_ENV was: ${rawNodeEnv ?? '(not set)'}`
-    );
+        `NODE_ENV was: ${rawNodeEnv ?? '(not set)'}`,
+    )
   }
 
-  return result.data;
-};
+  return result.data
+}

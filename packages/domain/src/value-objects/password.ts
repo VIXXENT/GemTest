@@ -17,12 +17,13 @@ import type { Brand } from '../types/brand.js'
 export type Password = Brand<string, 'Password'>
 
 /** Minimum password length enforced by domain rules. */
-const MIN_LENGTH = 8
+const MIN_LENGTH: number = 8
 
 /** Regex requiring at least one letter and one digit. */
-const COMPLEXITY_REGEX = /^(?=.*[A-Za-z])(?=.*\d).+$/
+const COMPLEXITY_REGEX: RegExp = /^(?=.*[A-Za-z])(?=.*\d).+$/
 
 /** Internal Zod schema for structural validation. */
+// eslint-disable-next-line @typescript-eslint/typedef
 const PasswordSchema = z
   .string()
   .min(MIN_LENGTH, `Password must be at least ${MIN_LENGTH} characters`)
@@ -47,12 +48,15 @@ type CreatePasswordParams = {
  *          Err<InvalidPassword> for length violations,
  *          Err<WeakPassword> for complexity violations.
  */
-export const createPassword = (params: CreatePasswordParams): Result<Password, DomainError> => {
+export const createPassword: (
+  params: CreatePasswordParams,
+) => Result<Password, DomainError> = (params) => {
   const { value } = params
 
-  const structuralResult = PasswordSchema.safeParse(value)
+  const structuralResult: ReturnType<typeof PasswordSchema.safeParse> =
+    PasswordSchema.safeParse(value)
   if (!structuralResult.success) {
-    const message = structuralResult.error.issues[0]?.message ?? 'Invalid password'
+    const message: string = structuralResult.error.issues[0]?.message ?? 'Invalid password'
     return err(invalidPassword(message))
   }
 

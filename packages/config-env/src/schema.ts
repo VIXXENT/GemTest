@@ -7,12 +7,13 @@
  * test relaxes DATABASE_URL to allow in-memory SQLite; development uses the base.
  */
 
-import { z } from 'zod';
+import { z } from 'zod'
 
 /**
  * Base schema shared by all environments.
  * Covers the minimum required variables for the API to boot.
  */
+// eslint-disable-next-line @typescript-eslint/typedef
 export const BaseEnvSchema = z.object({
   NODE_ENV: z
     .enum(['development', 'production', 'test'])
@@ -23,13 +24,14 @@ export const BaseEnvSchema = z.object({
     .string()
     .min(32, 'AUTH_SECRET must be at least 32 characters'),
   AUTH_URL: z.string().url('AUTH_URL must be a valid URL'),
-});
+})
 
 /**
  * Production schema.
  * Extends base with stricter DATABASE_URL (must be a full URL) and
  * mandatory Turso credentials for the cloud SQLite instance.
  */
+// eslint-disable-next-line @typescript-eslint/typedef
 export const ProductionEnvSchema = BaseEnvSchema.extend({
   DATABASE_URL: z
     .string()
@@ -40,15 +42,16 @@ export const ProductionEnvSchema = BaseEnvSchema.extend({
   TURSO_AUTH_TOKEN: z
     .string()
     .min(1, 'TURSO_AUTH_TOKEN required in production'),
-});
+})
 
 /**
  * Test schema.
  * Relaxes DATABASE_URL to allow in-memory SQLite for fast, isolated test runs.
  */
+// eslint-disable-next-line @typescript-eslint/typedef
 export const TestEnvSchema = BaseEnvSchema.extend({
   DATABASE_URL: z.string().default('file::memory:'),
-});
+})
 
 /**
  * Union type covering all possible validated env shapes.
