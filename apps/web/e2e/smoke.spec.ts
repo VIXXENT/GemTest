@@ -6,6 +6,8 @@ test.describe('GemTest Smoke Test', () => {
     await page.goto('/', { waitUntil: 'networkidle' })
 
     // Check for the main title using role and regex
-    await expect(page.getByRole('heading', { name: /GemTest Monorepo/i })).toBeVisible({ timeout: 15000 })
+    // eslint-disable-next-line @typescript-eslint/typedef
+    const heading = page.getByRole('heading', { name: /GemTest Monorepo/i })
+    await expect(heading).toBeVisible({ timeout: 15000 })
   })
 })

@@ -31,7 +31,7 @@ type MapUserParams = {
  * @param params - Object containing the user from the database schema.
  * @returns A user object compatible with the Auth.js AdapterUser interface.
  */
-const mapUser = (params: MapUserParams): AdapterUser => {
+const mapUser: (params: MapUserParams) => AdapterUser = (params) => {
   const { user }: MapUserParams = params
   return {
     ...user,
@@ -199,7 +199,9 @@ export const DrizzleAdapter: Adapter = {
    * @param user - Object containing the user ID and the fields to update.
    * @returns A promise resolving to the updated AdapterUser.
    */
-  updateUser: async (user: Partial<AdapterUser> & Pick<AdapterUser, 'id'>): Promise<AdapterUser> => {
+  updateUser: async (
+    user: Partial<AdapterUser> & Pick<AdapterUser, 'id'>,
+  ): Promise<AdapterUser> => {
     const userId: number = parseInt(user.id, 10)
     const updateResult: Result<unknown[], Error> = await fromPromise(
       db.update(users).set({
@@ -292,7 +294,8 @@ export const DrizzleAdapter: Adapter = {
       return null
     }
 
-    const foundSession: SchemaSession | undefined = sessionResult.value[0] as SchemaSession | undefined
+    const foundSession: SchemaSession | undefined =
+      sessionResult.value[0] as SchemaSession | undefined
     if (!foundSession) {
       return null
     }

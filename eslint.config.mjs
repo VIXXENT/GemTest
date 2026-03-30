@@ -90,7 +90,8 @@ export default ts.config(
       "**/drizzle/**",
       "eslint.config.mjs",
       ".gemini/**",
-      "_docs/**"
+      "_docs/**",
+      "playwright-transform-cache-*/**"
     ]
   }
 );

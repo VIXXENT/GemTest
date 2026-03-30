@@ -4,6 +4,7 @@ import { z } from 'zod'
  * SOURCE OF TRUTH: User schema for the entire monorepo.
  * Any change here will be detected by Drizzle and React.
  */
+// eslint-disable-next-line @typescript-eslint/typedef
 export const UserSchema = z.object({
   id: z.number().int().positive().optional(),
   name: z.string().min(3, 'Name must be at least 3 characters').optional(),

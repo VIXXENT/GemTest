@@ -5,6 +5,8 @@
  * like user role and database ID, enabling type-safe access in callbacks.
  */
 
+/* eslint-disable no-restricted-syntax --
+   module augmentation requires interface (declaration merging) */
 declare module '@auth/core/types' {
   interface User {
     readonly role?: string
@@ -27,5 +29,6 @@ declare module '@auth/core/jwt' {
     readonly role?: string
   }
 }
+/* eslint-enable no-restricted-syntax */
 
 export {}

@@ -8,7 +8,7 @@ import { test, expect } from '@playwright/test'
  */
 test.describe.serial('Authentication Flow', () => {
   const timestamp: number = Date.now()
-  const testUser = {
+  const testUser: { name: string; email: string; password: string } = {
     name: `Test User ${timestamp}`,
     email: `test-${timestamp}@example.com`,
     password: 'Password123!',
@@ -109,6 +109,7 @@ test.describe.serial('Authentication Flow', () => {
     await page.waitForTimeout(1000)
     await page.reload({ waitUntil: 'networkidle' })
 
+    // eslint-disable-next-line @typescript-eslint/typedef
     const logoutBtn = page.getByRole('button', { name: /Salir/i })
     await expect(logoutBtn).toBeVisible({ timeout: 20000 })
 

@@ -3,6 +3,7 @@ import { z } from 'zod'
 /**
  * Account schema for OAuth providers.
  */
+// eslint-disable-next-line @typescript-eslint/typedef
 export const AccountSchema = z.object({
   id: z.string().optional(),
   userId: z.number().int(),
@@ -21,6 +22,7 @@ export const AccountSchema = z.object({
 /**
  * Session schema for database-based sessions.
  */
+// eslint-disable-next-line @typescript-eslint/typedef
 export const SessionSchema = z.object({
   id: z.string().optional(),
   sessionToken: z.string(),
@@ -33,6 +35,7 @@ export const SessionSchema = z.object({
 /**
  * VerificationToken schema for Magic Links and Password Recovery.
  */
+// eslint-disable-next-line @typescript-eslint/typedef
 export const VerificationTokenSchema = z.object({
   identifier: z.string(),
   token: z.string(),
