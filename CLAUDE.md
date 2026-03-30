@@ -48,7 +48,6 @@ These rules apply in every file, every PR, every response. No exceptions.
 ## Detail Documents
 
 Read these **only when working in the relevant area** — do not pre-load all docs.
-> **Note:** These files are created in Issue #22 (A2). Links may not resolve yet.
 
 | File | Read when… |
 |------|------------|
