@@ -170,7 +170,9 @@ export const createDrizzleUserRepository: (
               email: email as string,
               name,
               password: passwordHash,
+              image: '',
               role: role ?? 'user',
+              createdAt: new Date(),
             })
             .returning() as UserRow[]
           return rowToEntity(firstOrThrow(rows))
