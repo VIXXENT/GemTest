@@ -23,6 +23,7 @@
     "drizzle-zod": "^0.8.3",
     "express": "^5.2.1",
     "graphql": "^16.8.1",
+    "jose": "^5.10.0",
     "nodemailer": "^8.0.1"
   },
   "devDependencies": {
