@@ -1,4 +1,4 @@
-import type { EnvConfig } from '@gemtest/config-env'
+import type { EnvConfig } from '@voiler/config-env'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 

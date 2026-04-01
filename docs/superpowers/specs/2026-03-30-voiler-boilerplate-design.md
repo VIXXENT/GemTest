@@ -1,8 +1,8 @@
-# GemTest v2 — AI-First Boilerplate Design Spec
+# Voiler — AI-First Boilerplate Design Spec
 
 ## Overview
 
-GemTest v2 is a fullstack TypeScript monorepo boilerplate optimized for AI-agent-driven development. Each new project is an independent Git copy of this template. The boilerplate provides a solid architectural foundation (hexagonal architecture, type safety, error handling) that agents can parse, understand, and extend in a single context window.
+Voiler is a fullstack TypeScript monorepo boilerplate optimized for AI-agent-driven development. Each new project is an independent Git copy of this template. The boilerplate provides a solid architectural foundation (hexagonal architecture, type safety, error handling) that agents can parse, understand, and extend in a single context window.
 
 ## Target User
 
@@ -49,7 +49,7 @@ COMPOSITION ROOT       apps/api/src/container.ts (single DI wiring point)
 ### Key Invariants
 
 - `container.ts` is the ONLY file that imports concrete adapter classes
-- Use cases depend solely on port interfaces from `@gemtest/core`
+- Use cases depend solely on port interfaces from `@voiler/core`
 - tRPC routers are thin: parse input, call use case, return result
 - Domain layer has zero infrastructure imports
 - All fallible operations return `Result<T, E>` or `ResultAsync<T, E>`
@@ -57,7 +57,7 @@ COMPOSITION ROOT       apps/api/src/container.ts (single DI wiring point)
 ## Monorepo Structure
 
 ```
-gemtest-v2/
+voiler/
   apps/
     api/                    # Hono server + tRPC router + Better Auth
       src/
@@ -152,7 +152,7 @@ $ pnpm create-project
 ? Database for production: PostgreSQL (default) / SQLite (Turso)
 
 Processing...
-  -> Renaming @gemtest/* to @myapp/* across all package.json and imports
+  -> Renaming @voiler/* to @myapp/* across all package.json and imports
   -> Installing selected modules (connecting imports, routes, container deps)
   -> Removing unselected modules (deleting folders, cleaning references)
   -> Updating .env.example with selected module vars

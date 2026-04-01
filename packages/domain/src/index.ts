@@ -1,5 +1,5 @@
 /**
- * @module @gemtest/domain
+ * @module @voiler/domain
  *
  * Domain layer — entities, value objects, and domain errors.
  * This package has ZERO infrastructure dependencies.

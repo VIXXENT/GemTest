@@ -1,12 +1,12 @@
-# GemTest v2 — Implementation Plans Overview
+# Voiler — Implementation Plans Overview
 
 > **For agentic workers:** This document defines 6 implementation plans and their contracts.
 > Each plan produces working, testable software. Plans execute sequentially (A → B → C → D → E → F).
 > Before writing detailed plans, verify all contracts are compatible.
 
-**Goal:** Build GemTest v2 boilerplate from scratch with new stack (TanStack Start + tRPC + Hono + Better Auth + Drizzle + PostgreSQL/SQLite + Paraglide)
+**Goal:** Build Voiler boilerplate from scratch with new stack (TanStack Start + tRPC + Hono + Better Auth + Drizzle + PostgreSQL/SQLite + Paraglide)
 
-**Spec:** `docs/superpowers/specs/2026-03-30-gemtest-v2-boilerplate-design.md`
+**Spec:** `docs/superpowers/specs/2026-03-30-voiler-boilerplate-design.md`
 
 ---
 
@@ -74,7 +74,7 @@ export type User = z.infer<typeof UserSchema>
 ### Files Created
 
 ```
-gemtest-v2/
+voiler/
   package.json                    # Root workspace config
   pnpm-workspace.yaml
   turbo.json
@@ -320,7 +320,7 @@ type TRPCContext = {
 // POST /api/auth/stop-impersonating → restore admin session
 
 // Better Auth client (for frontend — Plan D consumes this)
-// @gemtest/auth package or inline in apps/api
+// @voiler/auth package or inline in apps/api
 export const authClient: ReturnType<typeof createAuthClient>
 ```
 
@@ -500,7 +500,7 @@ pnpm preview                   → Build + run in Docker like production (local 
 
 # Init script
 pnpm create-project            → Interactive project scaffolding
-  - Renames @gemtest/* to @<scope>/*
+  - Renames @voiler/* to @<scope>/*
   - Connects selected modules
   - Removes unselected modules
   - Updates .env.example
@@ -519,7 +519,7 @@ llms.txt                       # Machine-readable project summary
 ### Contract Consumed (from all previous plans)
 
 - Full project structure (apps/api, apps/web, packages/\*)
-- package.json names (`@gemtest/*`) for rename logic
+- package.json names (`@voiler/*`) for rename logic
 - container.ts, tRPC router (for module connection points)
 - .env.example (for module env vars)
 
@@ -625,7 +625,7 @@ _agents/
 | B(trpc guards) → D(RoleGate)   | Backend rejects → frontend hides (defense in depth)     | ✅          |
 | B(logging) → D(dev-menu)       | Request data → RequestInspector (via tRPC client state) | ✅          |
 | A-D(\*) → E(docker)            | All apps/packages → Dockerfile build                    | ✅          |
-| A-D(\*) → E(init)              | `@gemtest/*` names + `[MODULE:x]` markers → init script | ✅          |
+| A-D(\*) → E(init)              | `@voiler/*` names + `[MODULE:x]` markers → init script  | ✅          |
 | A-D(\*) → E(preview)           | Built images → `pnpm preview` validates prod-like       | ✅          |
 | A-E(\*) → F(docs)              | Real code → documentation examples                      | ✅          |
 

@@ -1,5 +1,5 @@
 {
-  "name": "@gemtest/schema",
+  "name": "@voiler/schema",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -20,7 +20,7 @@
     "zod": "^3.24.0"
   },
   "devDependencies": {
-    "@gemtest/config-ts": "workspace:*",
+    "@voiler/config-ts": "workspace:*",
     "@types/node": "^22.0.0",
     "typescript": "^5.7.0"
   }

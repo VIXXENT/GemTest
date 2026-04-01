@@ -1,5 +1,5 @@
 {
-  "name": "@gemtest/api",
+  "name": "@voiler/api",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -15,8 +15,8 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@gemtest/config-env": "workspace:*",
-    "@gemtest/schema": "workspace:*",
+    "@voiler/config-env": "workspace:*",
+    "@voiler/schema": "workspace:*",
     "hono": "^4.7.0",
     "@hono/node-server": "^1.14.0",
     "drizzle-orm": "^0.38.0",
@@ -24,7 +24,7 @@
     "hono-rate-limiter": "^0.4.0"
   },
   "devDependencies": {
-    "@gemtest/config-ts": "workspace:*",
+    "@voiler/config-ts": "workspace:*",
     "@types/node": "^22.0.0",
     "typescript": "^5.7.0",
     "tsx": "^4.19.0",

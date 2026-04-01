@@ -1,5 +1,5 @@
 {
-  "name": "@gemtest/core",
+  "name": "@voiler/core",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -14,7 +14,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@gemtest/config-ts": "workspace:*",
+    "@voiler/config-ts": "workspace:*",
     "typescript": "^5.7.0"
   }
 }

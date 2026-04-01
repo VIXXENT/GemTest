@@ -35,15 +35,15 @@ importers:
 
   apps/api:
     dependencies:
-      '@gemtest/config-env':
-        specifier: workspace:*
-        version: link:../../packages/config-env
-      '@gemtest/schema':
-        specifier: workspace:*
-        version: link:../../packages/schema
       '@hono/node-server':
         specifier: ^1.14.0
         version: 1.19.12(hono@4.12.9)
+      '@voiler/config-env':
+        specifier: workspace:*
+        version: link:../../packages/config-env
+      '@voiler/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
       drizzle-orm:
         specifier: ^0.38.0
         version: 0.38.4(postgres@3.4.8)
@@ -57,12 +57,12 @@ importers:
         specifier: ^3.4.0
         version: 3.4.8
     devDependencies:
-      '@gemtest/config-ts':
-        specifier: workspace:*
-        version: link:../../packages/config-ts
       '@types/node':
         specifier: ^22.0.0
         version: 22.19.15
+      '@voiler/config-ts':
+        specifier: workspace:*
+        version: link:../../packages/config-ts
       drizzle-kit:
         specifier: ^0.30.0
         version: 0.30.6
@@ -82,12 +82,12 @@ importers:
         specifier: ^3.24.0
         version: 3.25.76
     devDependencies:
-      '@gemtest/config-ts':
-        specifier: workspace:*
-        version: link:../config-ts
       '@types/node':
         specifier: ^22.0.0
         version: 22.19.15
+      '@voiler/config-ts':
+        specifier: workspace:*
+        version: link:../config-ts
       typescript:
         specifier: ^5.7.0
         version: 5.9.3
@@ -96,7 +96,7 @@ importers:
 
   packages/core:
     devDependencies:
-      '@gemtest/config-ts':
+      '@voiler/config-ts':
         specifier: workspace:*
         version: link:../config-ts
       typescript:
@@ -105,7 +105,7 @@ importers:
 
   packages/domain:
     devDependencies:
-      '@gemtest/config-ts':
+      '@voiler/config-ts':
         specifier: workspace:*
         version: link:../config-ts
       typescript:
@@ -124,19 +124,19 @@ importers:
         specifier: ^3.24.0
         version: 3.25.76
     devDependencies:
-      '@gemtest/config-ts':
-        specifier: workspace:*
-        version: link:../config-ts
       '@types/node':
         specifier: ^22.0.0
         version: 22.19.15
+      '@voiler/config-ts':
+        specifier: workspace:*
+        version: link:../config-ts
       typescript:
         specifier: ^5.7.0
         version: 5.9.3
 
   packages/ui:
     devDependencies:
-      '@gemtest/config-ts':
+      '@voiler/config-ts':
         specifier: workspace:*
         version: link:../config-ts
       typescript:

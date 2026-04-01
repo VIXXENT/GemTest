@@ -51,7 +51,7 @@ Tasks 9, 10 depend on 8.
 
 ```json
 {
-  "name": "gemtest-v2",
+  "name": "voiler",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@9.15.4",
@@ -176,7 +176,7 @@ NODE_ENV=development
 PORT=4000
 
 # Database (PostgreSQL via Docker Compose)
-DATABASE_URL=postgresql://gemtest:gemtest_dev@localhost:5432/gemtest_dev
+DATABASE_URL=postgresql://voiler:voiler_dev@localhost:5432/voiler_dev
 
 # Auth (generate with: openssl rand -base64 48)
 AUTH_SECRET=replace-me-with-at-least-32-characters-long-secret-key
@@ -209,7 +209,7 @@ feat(plan-a): scaffold monorepo root with Turborepo + pnpm workspace
 
 ```json
 {
-  "name": "@gemtest/config-ts",
+  "name": "@voiler/config-ts",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -442,25 +442,25 @@ feat(plan-a): configure ESLint strict rules and Prettier
 services:
   db:
     image: postgres:16-alpine
-    container_name: gemtest-db
+    container_name: voiler-db
     restart: unless-stopped
     ports:
       - '5432:5432'
     environment:
-      POSTGRES_USER: gemtest
-      POSTGRES_PASSWORD: gemtest_dev
-      POSTGRES_DB: gemtest_dev
+      POSTGRES_USER: voiler
+      POSTGRES_PASSWORD: voiler_dev
+      POSTGRES_DB: voiler_dev
     volumes:
-      - gemtest_pgdata:/var/lib/postgresql/data
+      - voiler_pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U gemtest -d gemtest_dev']
+      test: ['CMD-SHELL', 'pg_isready -U voiler -d voiler_dev']
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
 
 volumes:
-  gemtest_pgdata:
+  voiler_pgdata:
     driver: local
 ```
 
@@ -472,15 +472,15 @@ Run:
 docker compose up db -d
 ```
 
-Expected: Container `gemtest-db` running, port 5432 open.
+Expected: Container `voiler-db` running, port 5432 open.
 
 Run:
 
 ```bash
-docker compose exec db pg_isready -U gemtest -d gemtest_dev
+docker compose exec db pg_isready -U voiler -d voiler_dev
 ```
 
-Expected: `gemtest_dev - accepting connections`
+Expected: `voiler_dev - accepting connections`
 
 - [ ] **Step 3: Commit**
 
@@ -505,7 +505,7 @@ feat(plan-a): add Docker Compose with PostgreSQL 16
 Run:
 
 ```bash
-pnpm add --filter @gemtest/config-env zod dotenv
+pnpm add --filter @voiler/config-env zod dotenv
 ```
 
 Expected: Dependencies added to `packages/config-env/package.json`.
@@ -514,7 +514,7 @@ Expected: Dependencies added to `packages/config-env/package.json`.
 
 ```json
 {
-  "name": "@gemtest/config-env",
+  "name": "@voiler/config-env",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -534,7 +534,7 @@ Expected: Dependencies added to `packages/config-env/package.json`.
     "dotenv": "^16.4.0"
   },
   "devDependencies": {
-    "@gemtest/config-ts": "workspace:*",
+    "@voiler/config-ts": "workspace:*",
     "typescript": "^5.7.0"
   }
 }
@@ -544,7 +544,7 @@ Expected: Dependencies added to `packages/config-env/package.json`.
 
 ```json
 {
-  "extends": "@gemtest/config-ts/base.json",
+  "extends": "@voiler/config-ts/base.json",
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist"
@@ -640,7 +640,7 @@ export { loadEnv }
 
 ````ts
 /**
- * @module @gemtest/config-env
+ * @module @voiler/config-env
  *
  * Zod-validated environment configuration with fail-fast behavior.
  * Validates all required env vars at startup — if any are missing
@@ -648,7 +648,7 @@ export { loadEnv }
  *
  * @example
  * ```ts
- * import { loadEnv } from '@gemtest/config-env'
+ * import { loadEnv } from '@voiler/config-env'
  * const env = loadEnv()
  * console.log(env.PORT) // 4000
  * ```
@@ -680,8 +680,8 @@ feat(plan-a): add config-env package with Zod validation and fail-fast
 Run:
 
 ```bash
-pnpm add --filter @gemtest/schema zod drizzle-orm
-pnpm add -D --filter @gemtest/schema @types/node typescript
+pnpm add --filter @voiler/schema zod drizzle-orm
+pnpm add -D --filter @voiler/schema @types/node typescript
 ```
 
 Expected: Dependencies added to `packages/schema/package.json`.
@@ -690,7 +690,7 @@ Expected: Dependencies added to `packages/schema/package.json`.
 
 ```json
 {
-  "name": "@gemtest/schema",
+  "name": "@voiler/schema",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -710,7 +710,7 @@ Expected: Dependencies added to `packages/schema/package.json`.
     "zod": "^3.24.0"
   },
   "devDependencies": {
-    "@gemtest/config-ts": "workspace:*",
+    "@voiler/config-ts": "workspace:*",
     "@types/node": "^22.0.0",
     "typescript": "^5.7.0"
   }
@@ -721,7 +721,7 @@ Expected: Dependencies added to `packages/schema/package.json`.
 
 ```json
 {
-  "extends": "@gemtest/config-ts/base.json",
+  "extends": "@voiler/config-ts/base.json",
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist"
@@ -789,7 +789,7 @@ export type { UserSelect, UserInsert }
 
 ````ts
 /**
- * @module @gemtest/schema
+ * @module @voiler/schema
  *
  * Zod + Drizzle schemas — single source of truth for all entities.
  * Drizzle owns table definitions, Zod owns validation rules.
@@ -797,7 +797,7 @@ export type { UserSelect, UserInsert }
  *
  * @example
  * ```ts
- * import { User, UserSelectSchema } from '@gemtest/schema'
+ * import { User, UserSelectSchema } from '@voiler/schema'
  * // User = Drizzle pgTable (for queries)
  * // UserSelectSchema = Zod schema (for validation)
  * ```
@@ -812,7 +812,7 @@ export type { UserSelect, UserInsert } from './entities/user.js'
 Run:
 
 ```bash
-pnpm add --filter @gemtest/schema drizzle-zod
+pnpm add --filter @voiler/schema drizzle-zod
 ```
 
 Expected: `drizzle-zod` added to `packages/schema/package.json` dependencies.
@@ -843,7 +843,7 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
 
 ```json
 {
-  "name": "@gemtest/domain",
+  "name": "@voiler/domain",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -859,7 +859,7 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
     "test": "vitest run"
   },
   "devDependencies": {
-    "@gemtest/config-ts": "workspace:*",
+    "@voiler/config-ts": "workspace:*",
     "typescript": "^5.7.0"
   }
 }
@@ -869,7 +869,7 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
 
 ```json
 {
-  "extends": "@gemtest/config-ts/base.json",
+  "extends": "@voiler/config-ts/base.json",
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist"
@@ -882,7 +882,7 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
 
 ```ts
 /**
- * @module @gemtest/domain
+ * @module @voiler/domain
  *
  * Domain layer — entities, value objects, and domain errors.
  * This package has ZERO infrastructure dependencies.
@@ -901,7 +901,7 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
 
 ```json
 {
-  "name": "@gemtest/core",
+  "name": "@voiler/core",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -917,7 +917,7 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
     "test": "vitest run"
   },
   "devDependencies": {
-    "@gemtest/config-ts": "workspace:*",
+    "@voiler/config-ts": "workspace:*",
     "typescript": "^5.7.0"
   }
 }
@@ -927,7 +927,7 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
 
 ```json
 {
-  "extends": "@gemtest/config-ts/base.json",
+  "extends": "@voiler/config-ts/base.json",
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist"
@@ -940,10 +940,10 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
 
 ```ts
 /**
- * @module @gemtest/core
+ * @module @voiler/core
  *
  * Core layer — port interfaces and application error union.
- * Depends only on @gemtest/domain and neverthrow.
+ * Depends only on @voiler/domain and neverthrow.
  *
  * @remarks
  * Populated in Plan B with:
@@ -960,7 +960,7 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
 
 ```json
 {
-  "name": "@gemtest/ui",
+  "name": "@voiler/ui",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -975,7 +975,7 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@gemtest/config-ts": "workspace:*",
+    "@voiler/config-ts": "workspace:*",
     "typescript": "^5.7.0"
   }
 }
@@ -985,7 +985,7 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
 
 ```json
 {
-  "extends": "@gemtest/config-ts/base.json",
+  "extends": "@voiler/config-ts/base.json",
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
@@ -999,7 +999,7 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
 
 ```ts
 /**
- * @module @gemtest/ui
+ * @module @voiler/ui
  *
  * Shared UI components — Tailwind CSS + shadcn/ui based.
  *
@@ -1040,7 +1040,7 @@ feat(plan-a): add empty barrel packages (domain, core, ui)
 Run:
 
 ```bash
-pnpm add --filter @gemtest/api \
+pnpm add --filter @voiler/api \
   hono \
   @hono/node-server \
   drizzle-orm \
@@ -1051,7 +1051,7 @@ pnpm add --filter @gemtest/api \
 Run:
 
 ```bash
-pnpm add -D --filter @gemtest/api \
+pnpm add -D --filter @voiler/api \
   @types/node \
   typescript \
   tsx \
@@ -1064,7 +1064,7 @@ Expected: Dependencies added to `apps/api/package.json`.
 
 ```json
 {
-  "name": "@gemtest/api",
+  "name": "@voiler/api",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -1080,8 +1080,8 @@ Expected: Dependencies added to `apps/api/package.json`.
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@gemtest/config-env": "workspace:*",
-    "@gemtest/schema": "workspace:*",
+    "@voiler/config-env": "workspace:*",
+    "@voiler/schema": "workspace:*",
     "hono": "^4.7.0",
     "@hono/node-server": "^1.14.0",
     "drizzle-orm": "^0.38.0",
@@ -1089,7 +1089,7 @@ Expected: Dependencies added to `apps/api/package.json`.
     "hono-rate-limiter": "^0.4.0"
   },
   "devDependencies": {
-    "@gemtest/config-ts": "workspace:*",
+    "@voiler/config-ts": "workspace:*",
     "@types/node": "^22.0.0",
     "typescript": "^5.7.0",
     "tsx": "^4.19.0",
@@ -1102,7 +1102,7 @@ Expected: Dependencies added to `apps/api/package.json`.
 
 ```json
 {
-  "extends": "@gemtest/config-ts/base.json",
+  "extends": "@voiler/config-ts/base.json",
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
@@ -1117,14 +1117,14 @@ Expected: Dependencies added to `apps/api/package.json`.
 
 ```ts
 /**
- * Re-exports all Drizzle table definitions from @gemtest/schema.
+ * Re-exports all Drizzle table definitions from @voiler/schema.
  * This file is the single import point for Drizzle migrations and queries.
  *
  * @remarks
  * drizzle-kit reads this file for migration generation.
- * New tables from @gemtest/schema must be re-exported here.
+ * New tables from @voiler/schema must be re-exported here.
  */
-export { User } from '@gemtest/schema'
+export { User } from '@voiler/schema'
 ```
 
 - [ ] **Step 5: Create `apps/api/src/db/index.ts`**
@@ -1133,7 +1133,7 @@ export { User } from '@gemtest/schema'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 
-import type { EnvConfig } from '@gemtest/config-env'
+import type { EnvConfig } from '@voiler/config-env'
 
 import * as schema from './schema.js'
 
@@ -1390,7 +1390,7 @@ import { cors } from 'hono/cors'
 import { bodyLimit } from 'hono/body-limit'
 import { serve } from '@hono/node-server'
 
-import { loadEnv } from '@gemtest/config-env'
+import { loadEnv } from '@voiler/config-env'
 
 import { createDb } from './db/index.js'
 import { createHealthRoute } from './http/index.js'
@@ -1636,7 +1636,7 @@ Run:
 docker compose up db -d
 ```
 
-Expected: `gemtest-db` container running, healthy.
+Expected: `voiler-db` container running, healthy.
 
 - [ ] **Step 3: Create `.env` from example**
 
@@ -1657,7 +1657,7 @@ AUTH_SECRET=this-is-a-development-secret-that-is-at-least-32-chars-long
 Run:
 
 ```bash
-pnpm --filter @gemtest/api db:push
+pnpm --filter @voiler/api db:push
 ```
 
 Expected: User table created in PostgreSQL. Output shows migration applied.
@@ -1667,7 +1667,7 @@ Expected: User table created in PostgreSQL. Output shows migration applied.
 Run:
 
 ```bash
-pnpm --filter @gemtest/api dev
+pnpm --filter @voiler/api dev
 ```
 
 Expected: `[api] Server running on http://localhost:4000`
@@ -1782,7 +1782,7 @@ At the end of Plan A, the following must be true:
 | -------------------- | -------------------------------- | ----------------------------------- |
 | Dependencies install | `pnpm install`                   | Clean install, no errors            |
 | PostgreSQL running   | `docker compose up db -d`        | Container healthy                   |
-| Server starts        | `pnpm --filter @gemtest/api dev` | Listening on :4000                  |
+| Server starts        | `pnpm --filter @voiler/api dev`  | Listening on :4000                  |
 | Health endpoint      | `curl localhost:4000/health`     | `{ status: "ok", db: "connected" }` |
 | Security headers     | `curl -sI localhost:4000/health` | All OWASP headers present           |
 | CORS works           | Origin check                     | Rejects unknown origins             |

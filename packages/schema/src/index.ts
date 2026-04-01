@@ -1,5 +1,5 @@
 /**
- * @module @gemtest/schema
+ * @module @voiler/schema
  *
  * Zod + Drizzle schemas — single source of truth for all entities.
  * Drizzle owns table definitions, Zod owns validation rules.
@@ -7,7 +7,7 @@
  *
  * @example
  * ```ts
- * import { User, UserSelectSchema } from '@gemtest/schema'
+ * import { User, UserSelectSchema } from '@voiler/schema'
  * // User = Drizzle pgTable (for queries)
  * // UserSelectSchema = Zod schema (for validation)
  * ```

@@ -1,5 +1,5 @@
 /**
- * @module @gemtest/config-env
+ * @module @voiler/config-env
  *
  * Zod-validated environment configuration with fail-fast behavior.
  * Validates all required env vars at startup — if any are missing
@@ -7,7 +7,7 @@
  *
  * @example
  * ```ts
- * import { loadEnv } from '@gemtest/config-env'
+ * import { loadEnv } from '@voiler/config-env'
  * const env = loadEnv()
  * console.log(env.PORT) // 4000
  * ```

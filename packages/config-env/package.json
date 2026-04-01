@@ -1,5 +1,5 @@
 {
-  "name": "@gemtest/config-env",
+  "name": "@voiler/config-env",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -19,7 +19,7 @@
     "dotenv": "^16.4.0"
   },
   "devDependencies": {
-    "@gemtest/config-ts": "workspace:*",
+    "@voiler/config-ts": "workspace:*",
     "@types/node": "^22.0.0",
     "typescript": "^5.7.0"
   }

@@ -1,5 +1,5 @@
 {
-  "extends": "@gemtest/config-ts/base.json",
+  "extends": "@voiler/config-ts/base.json",
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",

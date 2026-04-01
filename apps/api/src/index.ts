@@ -1,5 +1,5 @@
-import { loadEnv } from '@gemtest/config-env'
 import { serve } from '@hono/node-server'
+import { loadEnv } from '@voiler/config-env'
 import { Hono } from 'hono'
 import { bodyLimit } from 'hono/body-limit'
 import { cors } from 'hono/cors'

@@ -1,8 +1,8 @@
 /**
- * @module @gemtest/core
+ * @module @voiler/core
  *
  * Core layer — port interfaces and application error union.
- * Depends only on @gemtest/domain and neverthrow.
+ * Depends only on @voiler/domain and neverthrow.
  *
  * @remarks
  * Populated in Plan B with:

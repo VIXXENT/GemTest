@@ -1,5 +1,5 @@
 /**
- * @module @gemtest/ui
+ * @module @voiler/ui
  *
  * Shared UI components — Tailwind CSS + shadcn/ui based.
  *
