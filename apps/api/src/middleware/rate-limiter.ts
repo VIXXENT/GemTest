@@ -29,10 +29,8 @@ const createRateLimiter = (config?: RateLimiterConfig): MiddlewareHandler => {
     limit: max,
     standardHeaders: 'draft-6',
     keyGenerator: (c) => {
-      const forwardedFor: string | undefined =
-        c.req.header('x-forwarded-for')
-      const realIp: string | undefined =
-        c.req.header('x-real-ip')
+      const forwardedFor: string | undefined = c.req.header('x-forwarded-for')
+      const realIp: string | undefined = c.req.header('x-real-ip')
       const fallback: string = '127.0.0.1'
 
       return forwardedFor?.split(',')[0]?.trim() ?? realIp ?? fallback

@@ -12,21 +12,21 @@ GemTest v2 is a fullstack TypeScript monorepo boilerplate optimized for AI-agent
 
 ## Stack
 
-| Layer | Technology | Why |
-|-------|-----------|-----|
-| Frontend | TanStack Start | SSR + SPA hybrid, Vite-based, zero lock-in, typed routes |
-| API | tRPC + Hono | End-to-end type safety without codegen + ultralight multi-runtime server |
-| Auth | Better Auth | TS-first, plugin system, zero adapter code, Hono native |
-| ORM | Drizzle | Same API for SQLite (dev) and PostgreSQL (prod) |
-| DB (all envs) | PostgreSQL | One driver everywhere — dev via Docker, free and open source |
-| Validation | Zod | Single source of truth for types |
-| Error handling | neverthrow | Result/ResultAsync, no throw in business logic |
-| Monorepo | Turborepo + pnpm | Proven, fast, well-supported |
-| Unit tests | Vitest | Fast, Vite-native, compatible with monorepo |
-| E2E tests | Playwright | Browser automation with webServer auto-start |
-| Format | Prettier | Enforced style — prevents agent drift |
-| UI | Tailwind CSS + shadcn/ui | Utility CSS + accessible components |
-| i18n | Paraglide JS | Compile-time, zero runtime overhead, type-safe, tree-shakes unused strings |
+| Layer          | Technology               | Why                                                                        |
+| -------------- | ------------------------ | -------------------------------------------------------------------------- |
+| Frontend       | TanStack Start           | SSR + SPA hybrid, Vite-based, zero lock-in, typed routes                   |
+| API            | tRPC + Hono              | End-to-end type safety without codegen + ultralight multi-runtime server   |
+| Auth           | Better Auth              | TS-first, plugin system, zero adapter code, Hono native                    |
+| ORM            | Drizzle                  | Same API for SQLite (dev) and PostgreSQL (prod)                            |
+| DB (all envs)  | PostgreSQL               | One driver everywhere — dev via Docker, free and open source               |
+| Validation     | Zod                      | Single source of truth for types                                           |
+| Error handling | neverthrow               | Result/ResultAsync, no throw in business logic                             |
+| Monorepo       | Turborepo + pnpm         | Proven, fast, well-supported                                               |
+| Unit tests     | Vitest                   | Fast, Vite-native, compatible with monorepo                                |
+| E2E tests      | Playwright               | Browser automation with webServer auto-start                               |
+| Format         | Prettier                 | Enforced style — prevents agent drift                                      |
+| UI             | Tailwind CSS + shadcn/ui | Utility CSS + accessible components                                        |
+| i18n           | Paraglide JS             | Compile-time, zero runtime overhead, type-safe, tree-shakes unused strings |
 
 ## Architecture
 
@@ -96,12 +96,12 @@ gemtest-v2/
 
 ### Files at Root
 
-| File | Purpose | Audience |
-|------|---------|----------|
-| `CLAUDE.md` | Navigation hub < 200 lines, critical mandates | Claude Code, Cursor |
+| File        | Purpose                                           | Audience                        |
+| ----------- | ------------------------------------------------- | ------------------------------- |
+| `CLAUDE.md` | Navigation hub < 200 lines, critical mandates     | Claude Code, Cursor             |
 | `AGENTS.md` | Open standard (Linux Foundation) — six core areas | Codex, Copilot, Kilo, any agent |
-| `GEMINI.md` | Symlink to CLAUDE.md | Gemini CLI |
-| `llms.txt` | Machine-readable project summary | LLM crawlers, agent discovery |
+| `GEMINI.md` | Symlink to CLAUDE.md                              | Gemini CLI                      |
+| `llms.txt`  | Machine-readable project summary                  | LLM crawlers, agent discovery   |
 
 ### AGENTS.md Structure (Six Core Areas)
 
@@ -114,13 +114,13 @@ gemtest-v2/
 
 ### Progressive Disclosure Tiers
 
-| Tier | Content | When Loaded |
-|------|---------|-------------|
-| Hot (always) | CLAUDE.md, AGENTS.md | Every session start |
-| Domain (on task) | docs/*.md, _agents/*.md, module CLAUDE.md | When working in relevant area |
-| Cold (on demand) | ADRs, module.json, detailed guides | When agent needs specific reference |
+| Tier             | Content                                    | When Loaded                         |
+| ---------------- | ------------------------------------------ | ----------------------------------- |
+| Hot (always)     | CLAUDE.md, AGENTS.md                       | Every session start                 |
+| Domain (on task) | docs/_.md, \_agents/_.md, module CLAUDE.md | When working in relevant area       |
+| Cold (on demand) | ADRs, module.json, detailed guides         | When agent needs specific reference |
 
-### Multi-Agent System (_agents/)
+### Multi-Agent System (\_agents/)
 
 Six roles with explicit handoff contracts:
 
@@ -216,11 +216,11 @@ API requests → Hono → Better Auth middleware (session from cookies)
 
 One database engine, one driver, one schema — zero ambiguity across environments.
 
-| Environment | Database | How |
-|------------|----------|-----|
-| Development | PostgreSQL 16 | `docker compose up db` (local container) |
-| Test | PostgreSQL 16 | Same container, separate test database or transaction rollback |
-| Production | PostgreSQL 16 | Self-hosted or managed (Railway, Supabase, Neon, etc.) |
+| Environment | Database      | How                                                            |
+| ----------- | ------------- | -------------------------------------------------------------- |
+| Development | PostgreSQL 16 | `docker compose up db` (local container)                       |
+| Test        | PostgreSQL 16 | Same container, separate test database or transaction rollback |
+| Production  | PostgreSQL 16 | Self-hosted or managed (Railway, Supabase, Neon, etc.)         |
 
 **Why not SQLite for dev?** Drizzle uses different schema modules per driver (`sqlite-core` vs `pg-core`). Maintaining dual schemas adds complexity and risk of drift. One driver everywhere is simpler.
 
@@ -287,12 +287,12 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 20, cache: pnpm }
       - run: pnpm install --frozen-lockfile
-      - run: pnpm lint              # ESLint strict
-      - run: pnpm format:check      # Prettier
-      - run: pnpm typecheck          # tsc --noEmit all packages
-      - run: pnpm test              # Vitest unit tests
+      - run: pnpm lint # ESLint strict
+      - run: pnpm format:check # Prettier
+      - run: pnpm typecheck # tsc --noEmit all packages
+      - run: pnpm test # Vitest unit tests
       - run: npx playwright install --with-deps chromium
-      - run: pnpm test:e2e          # Playwright with webServer auto-start
+      - run: pnpm test:e2e # Playwright with webServer auto-start
 ```
 
 ## Code Standards (Inherited from v1)
@@ -322,6 +322,7 @@ Retrofitting i18n into a live project requires touching every hardcoded string �
 ### Single-Language Experience
 
 With only one language (`messages/en.json`), the developer experience is:
+
 - Write `m.buttonLabel()` instead of `"Button Label"` — slightly more explicit, fully typed
 - No locale switcher, no detection middleware, no URL prefixes
 - Build output identical to hardcoded strings (compiled away)
@@ -358,8 +359,8 @@ An in-app developer panel accessible only to users with `dev` or `admin` role. D
 ```typescript
 // Stacking: publicProcedure → authedProcedure → adminProcedure
 const publicProcedure = t.procedure
-const authedProcedure = publicProcedure.use(authGuard)     // rejects if no session
-const adminProcedure = authedProcedure.use(roleGuard('admin'))  // rejects if role !== 'admin'
+const authedProcedure = publicProcedure.use(authGuard) // rejects if no session
+const adminProcedure = authedProcedure.use(roleGuard('admin')) // rejects if role !== 'admin'
 const devProcedure = authedProcedure.use(roleGuard('dev'))
 ```
 
@@ -379,19 +380,19 @@ const devProcedure = authedProcedure.use(roleGuard('dev'))
 
 Every HTTP request to the backend generates a structured log entry:
 
-| Field | Description |
-|-------|-------------|
-| `requestId` | UUID v4 — same ID across all logs for one request (correlation) |
-| `timestamp` | ISO 8601 |
-| `method` | HTTP method (GET, POST, etc.) |
-| `path` | Request path (`/trpc/user.create`, `/api/auth/sign-in`) |
-| `status` | Response status code |
-| `durationMs` | Request → response time |
-| `userId` | Authenticated user ID (if any) |
-| `useCase` | Use case name executed (e.g., `createUser`, `authenticate`) |
-| `action` | Semantic action tag: `user.create`, `user.delete`, `auth.login`, `auth.logout` |
-| `entityId` | ID of the created/modified/deleted entity (not the full object) |
-| `level` | `info` for success, `warn` for client errors (4xx), `error` for server errors (5xx) |
+| Field        | Description                                                                         |
+| ------------ | ----------------------------------------------------------------------------------- |
+| `requestId`  | UUID v4 — same ID across all logs for one request (correlation)                     |
+| `timestamp`  | ISO 8601                                                                            |
+| `method`     | HTTP method (GET, POST, etc.)                                                       |
+| `path`       | Request path (`/trpc/user.create`, `/api/auth/sign-in`)                             |
+| `status`     | Response status code                                                                |
+| `durationMs` | Request → response time                                                             |
+| `userId`     | Authenticated user ID (if any)                                                      |
+| `useCase`    | Use case name executed (e.g., `createUser`, `authenticate`)                         |
+| `action`     | Semantic action tag: `user.create`, `user.delete`, `auth.login`, `auth.logout`      |
+| `entityId`   | ID of the created/modified/deleted entity (not the full object)                     |
+| `level`      | `info` for success, `warn` for client errors (4xx), `error` for server errors (5xx) |
 
 ### What Does NOT Get Logged
 
@@ -425,6 +426,7 @@ Leverages Better Auth's session management plugin.
 ### Integration
 
 Better Auth stores sessions in the database by default. The plugin adds:
+
 - `GET /api/auth/sessions` — list active sessions
 - `POST /api/auth/revoke-session` — revoke by session ID
 - `POST /api/auth/revoke-all-sessions` — revoke all except current

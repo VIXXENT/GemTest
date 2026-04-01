@@ -11,9 +11,6 @@ import { defineConfig } from 'vitest/config'
 // eslint-disable-next-line @typescript-eslint/typedef
 export default defineConfig({
   test: {
-    projects: [
-      'apps/*/vitest.config.ts',
-      'packages/*/vitest.config.ts',
-    ],
+    projects: ['apps/*/vitest.config.ts', 'packages/*/vitest.config.ts'],
   },
 })

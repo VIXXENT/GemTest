@@ -38,6 +38,7 @@ Tasks 9, 10 depend on 8.
 ## Task 1: Monorepo Scaffold
 
 **Files:**
+
 - Create: `package.json`
 - Create: `pnpm-workspace.yaml`
 - Create: `turbo.json`
@@ -76,8 +77,8 @@ Tasks 9, 10 depend on 8.
 
 ```yaml
 packages:
-  - "apps/*"
-  - "packages/*"
+  - 'apps/*'
+  - 'packages/*'
 ```
 
 - [ ] **Step 3: Create `turbo.json`**
@@ -87,31 +88,21 @@ packages:
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
     },
     "dev": {
       "cache": false,
       "persistent": true
     },
     "lint": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "typecheck": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "test": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     }
   }
 }
@@ -200,6 +191,7 @@ auto-install-peers=true
 ```
 
 - [ ] **Step 8: Commit**
+
 ```
 feat(plan-a): scaffold monorepo root with Turborepo + pnpm workspace
 ```
@@ -209,6 +201,7 @@ feat(plan-a): scaffold monorepo root with Turborepo + pnpm workspace
 ## Task 2: packages/config-ts
 
 **Files:**
+
 - Create: `packages/config-ts/package.json`
 - Create: `packages/config-ts/base.json`
 
@@ -220,9 +213,7 @@ feat(plan-a): scaffold monorepo root with Turborepo + pnpm workspace
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "files": [
-    "base.json"
-  ]
+  "files": ["base.json"]
 }
 ```
 
@@ -235,9 +226,7 @@ feat(plan-a): scaffold monorepo root with Turborepo + pnpm workspace
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "lib": [
-      "ES2022"
-    ],
+    "lib": ["ES2022"],
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -252,14 +241,12 @@ feat(plan-a): scaffold monorepo root with Turborepo + pnpm workspace
     "outDir": "dist",
     "rootDir": "src"
   },
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "exclude": ["node_modules", "dist"]
 }
 ```
 
 - [ ] **Step 3: Commit**
+
 ```
 feat(plan-a): add shared TypeScript config package
 ```
@@ -269,17 +256,20 @@ feat(plan-a): add shared TypeScript config package
 ## Task 3: ESLint + Prettier
 
 **Files:**
+
 - Create: `eslint.config.mjs`
 - Create: `prettier.config.mjs`
 
 - [ ] **Step 1: Install ESLint and Prettier dependencies (root)**
 
 Run:
+
 ```bash
 pnpm add -Dw eslint @eslint/js typescript-eslint \
   eslint-config-prettier eslint-plugin-import-x \
   prettier
 ```
+
 Expected: Dependencies added to root `package.json` devDependencies.
 
 - [ ] **Step 2: Create `eslint.config.mjs`**
@@ -362,14 +352,7 @@ const config = tseslint.config(
       'import-x/order': [
         'error',
         {
-          groups: [
-            'builtin',
-            'external',
-            'internal',
-            'parent',
-            'sibling',
-            'index',
-          ],
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
           'newlines-between': 'always',
           alphabetize: { order: 'asc', caseInsensitive: true },
         },
@@ -387,10 +370,7 @@ const config = tseslint.config(
       // --- General quality ---
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       eqeqeq: ['error', 'always'],
-      '@typescript-eslint/consistent-type-imports': [
-        'error',
-        { prefer: 'type-imports' },
-      ],
+      '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -401,12 +381,7 @@ const config = tseslint.config(
     },
   },
   {
-    ignores: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/.turbo/**',
-      '**/coverage/**',
-    ],
+    ignores: ['**/node_modules/**', '**/dist/**', '**/.turbo/**', '**/coverage/**'],
   },
 )
 
@@ -447,6 +422,7 @@ Each package that has TypeScript code needs in its `package.json`:
 These will be added as packages are created in subsequent tasks.
 
 - [ ] **Step 5: Commit**
+
 ```
 feat(plan-a): configure ESLint strict rules and Prettier
 ```
@@ -456,6 +432,7 @@ feat(plan-a): configure ESLint strict rules and Prettier
 ## Task 4: Docker Compose + PostgreSQL
 
 **Files:**
+
 - Create: `docker-compose.yml`
 - Modify: `.env.example` (already has DATABASE_URL from Task 1)
 
@@ -468,7 +445,7 @@ services:
     container_name: gemtest-db
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - '5432:5432'
     environment:
       POSTGRES_USER: gemtest
       POSTGRES_PASSWORD: gemtest_dev
@@ -476,7 +453,7 @@ services:
     volumes:
       - gemtest_pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U gemtest -d gemtest_dev"]
+      test: ['CMD-SHELL', 'pg_isready -U gemtest -d gemtest_dev']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -490,18 +467,23 @@ volumes:
 - [ ] **Step 2: Verify PostgreSQL starts**
 
 Run:
+
 ```bash
 docker compose up db -d
 ```
+
 Expected: Container `gemtest-db` running, port 5432 open.
 
 Run:
+
 ```bash
 docker compose exec db pg_isready -U gemtest -d gemtest_dev
 ```
+
 Expected: `gemtest_dev - accepting connections`
 
 - [ ] **Step 3: Commit**
+
 ```
 feat(plan-a): add Docker Compose with PostgreSQL 16
 ```
@@ -511,6 +493,7 @@ feat(plan-a): add Docker Compose with PostgreSQL 16
 ## Task 5: packages/config-env
 
 **Files:**
+
 - Create: `packages/config-env/package.json`
 - Create: `packages/config-env/tsconfig.json`
 - Create: `packages/config-env/src/schema.ts`
@@ -520,9 +503,11 @@ feat(plan-a): add Docker Compose with PostgreSQL 16
 - [ ] **Step 1: Install dependencies**
 
 Run:
+
 ```bash
 pnpm add --filter @gemtest/config-env zod dotenv
 ```
+
 Expected: Dependencies added to `packages/config-env/package.json`.
 
 - [ ] **Step 2: Create `packages/config-env/package.json`**
@@ -564,9 +549,7 @@ Expected: Dependencies added to `packages/config-env/package.json`.
     "rootDir": "src",
     "outDir": "dist"
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }
 ```
 
@@ -590,17 +573,12 @@ const AUTH_SECRET_MIN_LENGTH: number = 32
  * DATABASE_URL must be a valid PostgreSQL connection string.
  */
 const envSchema = z.object({
-  NODE_ENV: z
-    .enum(['development', 'production', 'test'])
-    .default('development'),
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().int().positive().default(4000),
   DATABASE_URL: z
     .string()
     .min(1, 'DATABASE_URL is required')
-    .startsWith(
-      'postgresql://',
-      'DATABASE_URL must be a PostgreSQL connection string',
-    ),
+    .startsWith('postgresql://', 'DATABASE_URL must be a PostgreSQL connection string'),
   AUTH_SECRET: z
     .string()
     .min(
@@ -641,8 +619,7 @@ import { envSchema } from './schema.js'
 const loadEnv = (): EnvConfig => {
   config()
 
-  const result: z.SafeParseReturnType<unknown, EnvConfig> =
-    envSchema.safeParse(process.env)
+  const result: z.SafeParseReturnType<unknown, EnvConfig> = envSchema.safeParse(process.env)
 
   if (!result.success) {
     const formattedErrors: string = result.error.issues
@@ -661,7 +638,7 @@ export { loadEnv }
 
 - [ ] **Step 6: Create `packages/config-env/src/index.ts`**
 
-```ts
+````ts
 /**
  * @module @gemtest/config-env
  *
@@ -679,9 +656,10 @@ export { loadEnv }
 export { loadEnv } from './load-env.js'
 export { envSchema } from './schema.js'
 export type { EnvConfig } from './schema.js'
-```
+````
 
 - [ ] **Step 7: Commit**
+
 ```
 feat(plan-a): add config-env package with Zod validation and fail-fast
 ```
@@ -691,6 +669,7 @@ feat(plan-a): add config-env package with Zod validation and fail-fast
 ## Task 6: packages/schema
 
 **Files:**
+
 - Create: `packages/schema/package.json`
 - Create: `packages/schema/tsconfig.json`
 - Create: `packages/schema/src/entities/user.ts`
@@ -699,10 +678,12 @@ feat(plan-a): add config-env package with Zod validation and fail-fast
 - [ ] **Step 1: Install dependencies**
 
 Run:
+
 ```bash
 pnpm add --filter @gemtest/schema zod drizzle-orm
 pnpm add -D --filter @gemtest/schema @types/node typescript
 ```
+
 Expected: Dependencies added to `packages/schema/package.json`.
 
 - [ ] **Step 2: Create `packages/schema/package.json`**
@@ -745,9 +726,7 @@ Expected: Dependencies added to `packages/schema/package.json`.
     "rootDir": "src",
     "outDir": "dist"
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }
 ```
 
@@ -772,12 +751,8 @@ const User = pgTable('user', {
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
   role: text('role').notNull().default('user'),
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true })
-    .notNull()
-    .defaultNow(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 })
 
 /**
@@ -812,7 +787,7 @@ export type { UserSelect, UserInsert }
 
 - [ ] **Step 5: Create `packages/schema/src/index.ts`**
 
-```ts
+````ts
 /**
  * @module @gemtest/schema
  *
@@ -827,27 +802,23 @@ export type { UserSelect, UserInsert }
  * // UserSelectSchema = Zod schema (for validation)
  * ```
  */
-export {
-  User,
-  UserSelectSchema,
-  UserInsertSchema,
-} from './entities/user.js'
+export { User, UserSelectSchema, UserInsertSchema } from './entities/user.js'
 
-export type {
-  UserSelect,
-  UserInsert,
-} from './entities/user.js'
-```
+export type { UserSelect, UserInsert } from './entities/user.js'
+````
 
 - [ ] **Step 6: Install drizzle-zod**
 
 Run:
+
 ```bash
 pnpm add --filter @gemtest/schema drizzle-zod
 ```
+
 Expected: `drizzle-zod` added to `packages/schema/package.json` dependencies.
 
 - [ ] **Step 7: Commit**
+
 ```
 feat(plan-a): add schema package with User table (Drizzle + Zod)
 ```
@@ -857,6 +828,7 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
 ## Task 7: Empty Package Barrels
 
 **Files:**
+
 - Create: `packages/domain/package.json`
 - Create: `packages/domain/tsconfig.json`
 - Create: `packages/domain/src/index.ts`
@@ -902,9 +874,7 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
     "rootDir": "src",
     "outDir": "dist"
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }
 ```
 
@@ -962,9 +932,7 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
     "rootDir": "src",
     "outDir": "dist"
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }
 ```
 
@@ -1023,9 +991,7 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
     "outDir": "dist",
     "jsx": "react-jsx"
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }
 ```
 
@@ -1048,6 +1014,7 @@ feat(plan-a): add schema package with User table (Drizzle + Zod)
 ```
 
 - [ ] **Step 10: Commit**
+
 ```
 feat(plan-a): add empty barrel packages (domain, core, ui)
 ```
@@ -1057,6 +1024,7 @@ feat(plan-a): add empty barrel packages (domain, core, ui)
 ## Task 8: apps/api — Hono Server
 
 **Files:**
+
 - Create: `apps/api/package.json`
 - Create: `apps/api/tsconfig.json`
 - Create: `apps/api/src/index.ts`
@@ -1070,6 +1038,7 @@ feat(plan-a): add empty barrel packages (domain, core, ui)
 - [ ] **Step 1: Install dependencies**
 
 Run:
+
 ```bash
 pnpm add --filter @gemtest/api \
   hono \
@@ -1080,6 +1049,7 @@ pnpm add --filter @gemtest/api \
 ```
 
 Run:
+
 ```bash
 pnpm add -D --filter @gemtest/api \
   @types/node \
@@ -1087,6 +1057,7 @@ pnpm add -D --filter @gemtest/api \
   tsx \
   drizzle-kit
 ```
+
 Expected: Dependencies added to `apps/api/package.json`.
 
 - [ ] **Step 2: Create `apps/api/package.json`**
@@ -1135,17 +1106,10 @@ Expected: Dependencies added to `apps/api/package.json`.
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
-  "include": [
-    "src"
-  ],
-  "references": [
-    { "path": "../../packages/config-env" },
-    { "path": "../../packages/schema" }
-  ]
+  "include": ["src"],
+  "references": [{ "path": "../../packages/config-env" }, { "path": "../../packages/schema" }]
 }
 ```
 
@@ -1322,10 +1286,8 @@ const createRateLimiter = (config?: RateLimiterConfig): MiddlewareHandler => {
     limit: max,
     standardHeaders: 'draft-6',
     keyGenerator: (c) => {
-      const forwardedFor: string | undefined =
-        c.req.header('x-forwarded-for')
-      const realIp: string | undefined =
-        c.req.header('x-real-ip')
+      const forwardedFor: string | undefined = c.req.header('x-forwarded-for')
+      const realIp: string | undefined = c.req.header('x-real-ip')
       const fallback: string = '127.0.0.1'
 
       return forwardedFor?.split(',')[0]?.trim() ?? realIp ?? fallback
@@ -1465,9 +1427,7 @@ const db = createDb({ databaseUrl: env.DATABASE_URL })
  * In production, this should be set via environment variable.
  */
 const allowedOrigins: string[] =
-  env.NODE_ENV === 'development'
-    ? ['http://localhost:3000', 'http://localhost:4000']
-    : []
+  env.NODE_ENV === 'development' ? ['http://localhost:3000', 'http://localhost:4000'] : []
 
 /**
  * Create and configure the Hono application.
@@ -1519,9 +1479,7 @@ serve(
     port: env.PORT,
   },
   (info) => {
-    console.warn(
-      `[api] Server running on http://localhost:${String(info.port)}`,
-    )
+    console.warn(`[api] Server running on http://localhost:${String(info.port)}`)
     console.warn(`[api] Environment: ${env.NODE_ENV}`)
   },
 )
@@ -1551,6 +1509,7 @@ export default defineConfig({
 ```
 
 - [ ] **Step 12: Commit**
+
 ```
 feat(plan-a): implement Hono server with security middleware and health endpoint
 ```
@@ -1560,15 +1519,18 @@ feat(plan-a): implement Hono server with security middleware and health endpoint
 ## Task 9: Vitest Configuration
 
 **Files:**
+
 - Create: `vitest.workspace.ts`
 - Modify: `package.json` (root — already has `test` script from Task 1)
 
 - [ ] **Step 1: Install Vitest at root**
 
 Run:
+
 ```bash
 pnpm add -Dw vitest
 ```
+
 Expected: `vitest` added to root `devDependencies`.
 
 - [ ] **Step 2: Create `vitest.workspace.ts`**
@@ -1584,10 +1546,7 @@ import { defineWorkspace } from 'vitest/config'
  * Each package can override settings via local vitest.config.ts.
  * Tests run in parallel across packages by default.
  */
-export default defineWorkspace([
-  'apps/*/vitest.config.ts',
-  'packages/*/vitest.config.ts',
-])
+export default defineWorkspace(['apps/*/vitest.config.ts', 'packages/*/vitest.config.ts'])
 ```
 
 - [ ] **Step 3: Create `apps/api/vitest.config.ts`**
@@ -1640,12 +1599,15 @@ export default defineConfig({
 - [ ] **Step 6: Verify Vitest runs**
 
 Run:
+
 ```bash
 pnpm test
 ```
+
 Expected: Vitest runs with 0 test suites, 0 tests, no errors. Clean exit.
 
 - [ ] **Step 7: Commit**
+
 ```
 feat(plan-a): configure Vitest workspace for monorepo testing
 ```
@@ -1659,27 +1621,33 @@ feat(plan-a): configure Vitest workspace for monorepo testing
 - [ ] **Step 1: Install all dependencies**
 
 Run:
+
 ```bash
 pnpm install
 ```
+
 Expected: All workspace packages resolved, no peer dependency errors.
 
 - [ ] **Step 2: Start PostgreSQL**
 
 Run:
+
 ```bash
 docker compose up db -d
 ```
+
 Expected: `gemtest-db` container running, healthy.
 
 - [ ] **Step 3: Create `.env` from example**
 
 Run:
+
 ```bash
 cp .env.example .env
 ```
 
 Edit `.env` to set a real AUTH_SECRET (at least 32 characters):
+
 ```env
 AUTH_SECRET=this-is-a-development-secret-that-is-at-least-32-chars-long
 ```
@@ -1687,26 +1655,33 @@ AUTH_SECRET=this-is-a-development-secret-that-is-at-least-32-chars-long
 - [ ] **Step 4: Push database schema**
 
 Run:
+
 ```bash
 pnpm --filter @gemtest/api db:push
 ```
+
 Expected: User table created in PostgreSQL. Output shows migration applied.
 
 - [ ] **Step 5: Start development server**
 
 Run:
+
 ```bash
 pnpm --filter @gemtest/api dev
 ```
+
 Expected: `[api] Server running on http://localhost:4000`
 
 - [ ] **Step 6: Test health endpoint**
 
 Run (in a separate terminal):
+
 ```bash
 curl -s http://localhost:4000/health | jq .
 ```
+
 Expected:
+
 ```json
 {
   "status": "ok",
@@ -1719,10 +1694,13 @@ Expected:
 - [ ] **Step 7: Verify security headers**
 
 Run:
+
 ```bash
 curl -sI http://localhost:4000/health
 ```
+
 Expected headers present:
+
 - `X-Content-Type-Options: nosniff`
 - `X-Frame-Options: DENY`
 - `Strict-Transport-Security: max-age=31536000; includeSubDomains`
@@ -1733,49 +1711,63 @@ Expected headers present:
 - [ ] **Step 8: Run all tooling gates**
 
 Run:
+
 ```bash
 pnpm lint
 ```
+
 Expected: 0 errors, 0 warnings.
 
 Run:
+
 ```bash
 pnpm format:check
 ```
+
 Expected: All files formatted correctly, exit code 0.
 
 Run:
+
 ```bash
 pnpm typecheck
 ```
+
 Expected: 0 errors across all packages and apps.
 
 Run:
+
 ```bash
 pnpm test
 ```
+
 Expected: Vitest runs, 0 test suites found, clean exit (no failures).
 
 - [ ] **Step 9: Verify CORS rejects unknown origins**
 
 Run:
+
 ```bash
 curl -sI -H "Origin: https://evil.com" http://localhost:4000/health
 ```
+
 Expected: No `Access-Control-Allow-Origin` header in response (origin rejected).
 
 - [ ] **Step 10: Verify rate limiter headers**
 
 Run:
+
 ```bash
 curl -sI http://localhost:4000/health
 ```
+
 Expected headers present:
+
 - `RateLimit-Limit: 100`
 - `RateLimit-Remaining: 99`
 - `RateLimit-Reset: ...`
 
 - [ ] **Step 11: Final commit**
+
 ```
 feat(plan-a): verify all tooling gates pass — Plan A complete
 ```
@@ -1786,19 +1778,19 @@ feat(plan-a): verify all tooling gates pass — Plan A complete
 
 At the end of Plan A, the following must be true:
 
-| Gate | Command | Expected |
-|------|---------|----------|
-| Dependencies install | `pnpm install` | Clean install, no errors |
-| PostgreSQL running | `docker compose up db -d` | Container healthy |
-| Server starts | `pnpm --filter @gemtest/api dev` | Listening on :4000 |
-| Health endpoint | `curl localhost:4000/health` | `{ status: "ok", db: "connected" }` |
-| Security headers | `curl -sI localhost:4000/health` | All OWASP headers present |
-| CORS works | Origin check | Rejects unknown origins |
-| Rate limiter works | Header check | RateLimit headers present |
-| Lint passes | `pnpm lint` | 0 errors |
-| Format passes | `pnpm format:check` | 0 differences |
-| Types pass | `pnpm typecheck` | 0 errors |
-| Tests pass | `pnpm test` | 0 suites, 0 failures |
+| Gate                 | Command                          | Expected                            |
+| -------------------- | -------------------------------- | ----------------------------------- |
+| Dependencies install | `pnpm install`                   | Clean install, no errors            |
+| PostgreSQL running   | `docker compose up db -d`        | Container healthy                   |
+| Server starts        | `pnpm --filter @gemtest/api dev` | Listening on :4000                  |
+| Health endpoint      | `curl localhost:4000/health`     | `{ status: "ok", db: "connected" }` |
+| Security headers     | `curl -sI localhost:4000/health` | All OWASP headers present           |
+| CORS works           | Origin check                     | Rejects unknown origins             |
+| Rate limiter works   | Header check                     | RateLimit headers present           |
+| Lint passes          | `pnpm lint`                      | 0 errors                            |
+| Format passes        | `pnpm format:check`              | 0 differences                       |
+| Types pass           | `pnpm typecheck`                 | 0 errors                            |
+| Tests pass           | `pnpm test`                      | 0 suites, 0 failures                |
 
 ---
 
@@ -1810,11 +1802,11 @@ export const loadEnv: () => EnvConfig
 // { NODE_ENV, PORT, DATABASE_URL, AUTH_SECRET }
 
 // packages/schema
-export { User }                  // Drizzle pgTable
-export { UserSelectSchema }      // Zod select schema
-export { UserInsertSchema }      // Zod insert schema
-export type { UserSelect }       // TypeScript select type
-export type { UserInsert }       // TypeScript insert type
+export { User } // Drizzle pgTable
+export { UserSelectSchema } // Zod select schema
+export { UserInsertSchema } // Zod insert schema
+export type { UserSelect } // TypeScript select type
+export type { UserInsert } // TypeScript insert type
 
 // packages/domain — empty barrel
 // packages/core — empty barrel

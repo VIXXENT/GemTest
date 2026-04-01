@@ -16,17 +16,12 @@ const AUTH_SECRET_MIN_LENGTH: number = 32
  */
 // eslint-disable-next-line @typescript-eslint/typedef
 const envSchema = z.object({
-  NODE_ENV: z
-    .enum(['development', 'production', 'test'])
-    .default('development'),
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().int().positive().default(4000),
   DATABASE_URL: z
     .string()
     .min(1, 'DATABASE_URL is required')
-    .startsWith(
-      'postgresql://',
-      'DATABASE_URL must be a PostgreSQL connection string',
-    ),
+    .startsWith('postgresql://', 'DATABASE_URL must be a PostgreSQL connection string'),
   AUTH_SECRET: z
     .string()
     .min(

@@ -12,13 +12,6 @@
  * // UserSelectSchema = Zod schema (for validation)
  * ```
  */
-export {
-  User,
-  UserSelectSchema,
-  UserInsertSchema,
-} from './entities/user.js'
+export { User, UserSelectSchema, UserInsertSchema } from './entities/user.js'
 
-export type {
-  UserSelect,
-  UserInsert,
-} from './entities/user.js'
+export type { UserSelect, UserInsert } from './entities/user.js'

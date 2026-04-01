@@ -39,9 +39,7 @@ const db = createDb({ databaseUrl: env.DATABASE_URL })
  * In production, this should be set via environment variable.
  */
 const allowedOrigins: string[] =
-  env.NODE_ENV === 'development'
-    ? ['http://localhost:3000', 'http://localhost:4000']
-    : []
+  env.NODE_ENV === 'development' ? ['http://localhost:3000', 'http://localhost:4000'] : []
 
 /**
  * Create and configure the Hono application.
@@ -93,9 +91,7 @@ serve(
     port: env.PORT,
   },
   (info) => {
-    console.warn(
-      `[api] Server running on http://localhost:${String(info.port)}`,
-    )
+    console.warn(`[api] Server running on http://localhost:${String(info.port)}`)
     console.warn(`[api] Environment: ${env.NODE_ENV}`)
   },
 )

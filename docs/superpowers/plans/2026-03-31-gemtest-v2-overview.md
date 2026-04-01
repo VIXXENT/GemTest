@@ -149,8 +149,11 @@ export type UserId = Brand<string, 'UserId'>
 export type Email = Brand<string, 'Email'>
 export type Password = Brand<string, 'Password'>
 export type DomainError =
-  | InvalidEmail | InvalidPassword | WeakPassword
-  | UserNotFound | UserAlreadyExists
+  | InvalidEmail
+  | InvalidPassword
+  | WeakPassword
+  | UserNotFound
+  | UserAlreadyExists
 // Constructors: createUserId, createEmail, createPassword
 // Error constructors: invalidEmail, invalidPassword, etc.
 
@@ -174,9 +177,9 @@ export type ITokenService = {
 }
 
 // packages/schema
-export const CreateUserInputSchema: z.ZodObject<{ name, email, password }>
-export const LoginInputSchema: z.ZodObject<{ email, password }>
-export const PublicUserSchema: z.ZodObject<{ id, name, email, role, createdAt }>
+export const CreateUserInputSchema: z.ZodObject<{ name; email; password }>
+export const LoginInputSchema: z.ZodObject<{ email; password }>
+export const PublicUserSchema: z.ZodObject<{ id; name; email; role; createdAt }>
 export type CreateUserInput = z.infer<typeof CreateUserInputSchema>
 export type LoginInput = z.infer<typeof LoginInputSchema>
 export type PublicUser = z.infer<typeof PublicUserSchema>
@@ -188,10 +191,10 @@ export type PublicUser = z.infer<typeof PublicUserSchema>
 // POST /trpc/auth.login    { email, password } → { token, user }
 
 // apps/api — tRPC guard middleware
-const publicProcedure    // no auth required
-const authedProcedure    // rejects 401 if no session
-const adminProcedure     // rejects 403 if role !== 'admin'
-const devProcedure       // rejects 403 if role !== 'dev'
+const publicProcedure // no auth required
+const authedProcedure // rejects 401 if no session
+const adminProcedure // rejects 403 if role !== 'admin'
+const devProcedure // rejects 403 if role !== 'dev'
 
 // apps/api — structured logging
 // Hono middleware: requestId, method, path, status, durationMs
@@ -290,12 +293,12 @@ Plan B complete — tRPC router working, User CRUD functional, container wired.
 
 ```typescript
 // apps/api — Better Auth instance
-export const auth: BetterAuth  // configured with Drizzle + plugins
+export const auth: BetterAuth // configured with Drizzle + plugins
 
 // apps/api/src/trpc/context.ts — enriched context
 type TRPCContext = {
   db: DrizzleDB
-  user: User | null          // populated from Better Auth session
+  user: User | null // populated from Better Auth session
   session: Session | null
 }
 
@@ -515,7 +518,7 @@ llms.txt                       # Machine-readable project summary
 
 ### Contract Consumed (from all previous plans)
 
-- Full project structure (apps/api, apps/web, packages/*)
+- Full project structure (apps/api, apps/web, packages/\*)
 - package.json names (`@gemtest/*`) for rename logic
 - container.ts, tRPC router (for module connection points)
 - .env.example (for module env vars)
@@ -552,7 +555,7 @@ modules/
 
 ### What It Builds
 
-Complete AI-first documentation: root CLAUDE.md hub, detail docs, ADRs, _agents/ role files, and module CLAUDE.md files.
+Complete AI-first documentation: root CLAUDE.md hub, detail docs, ADRs, \_agents/ role files, and module CLAUDE.md files.
 
 ### Entry State
 
@@ -603,28 +606,28 @@ _agents/
 
 ## Contract Compatibility Matrix
 
-| Producer → Consumer | Interface | Compatible? |
-|---------------------|-----------|-------------|
-| A(config-env) → B(container) | `loadEnv()` → `DATABASE_URL`, `AUTH_SECRET` | ✅ |
-| A(db) → B(adapters) | Drizzle `db` instance (PostgreSQL) | ✅ |
-| A(hono) → B(trpc) | Hono app → `app.route('/trpc', trpcHandler)` | ✅ |
-| A(schema) → B(domain) | `UserSchema` → `UserEntity` (independent types) | ✅ |
-| A(docker) → A(db) | `docker compose up db` → PostgreSQL on :5432 | ✅ |
-| B(trpc guards) → C(auth) | `authedProcedure` checks `ctx.session` from auth | ✅ |
-| B(container) → C(auth) | Use cases unchanged; auth enriches tRPC context | ✅ |
-| B(logging) → B(trpc) | Request middleware injects `requestId` in context | ✅ |
-| A(hono) → C(auth) | Hono app → `app.route('/api/auth', authHandler)` | ✅ |
-| A(db) → C(auth) | Drizzle `db` → Better Auth uses same instance | ✅ |
-| C(sessions) → D(frontend) | Session API → settings/sessions page | ✅ |
-| C(impersonation) → D(frontend) | Impersonate API → ImpersonationBanner | ✅ |
-| B(trpc) → D(frontend) | tRPC router type → `createTRPCClient<AppRouter>` | ✅ |
-| C(auth) → D(frontend) | Auth API → `createAuthClient({ baseURL })` | ✅ |
-| B(trpc guards) → D(RoleGate) | Backend rejects → frontend hides (defense in depth) | ✅ |
-| B(logging) → D(dev-menu) | Request data → RequestInspector (via tRPC client state) | ✅ |
-| A-D(*) → E(docker) | All apps/packages → Dockerfile build | ✅ |
-| A-D(*) → E(init) | `@gemtest/*` names + `[MODULE:x]` markers → init script | ✅ |
-| A-D(*) → E(preview) | Built images → `pnpm preview` validates prod-like | ✅ |
-| A-E(*) → F(docs) | Real code → documentation examples | ✅ |
+| Producer → Consumer            | Interface                                               | Compatible? |
+| ------------------------------ | ------------------------------------------------------- | ----------- |
+| A(config-env) → B(container)   | `loadEnv()` → `DATABASE_URL`, `AUTH_SECRET`             | ✅          |
+| A(db) → B(adapters)            | Drizzle `db` instance (PostgreSQL)                      | ✅          |
+| A(hono) → B(trpc)              | Hono app → `app.route('/trpc', trpcHandler)`            | ✅          |
+| A(schema) → B(domain)          | `UserSchema` → `UserEntity` (independent types)         | ✅          |
+| A(docker) → A(db)              | `docker compose up db` → PostgreSQL on :5432            | ✅          |
+| B(trpc guards) → C(auth)       | `authedProcedure` checks `ctx.session` from auth        | ✅          |
+| B(container) → C(auth)         | Use cases unchanged; auth enriches tRPC context         | ✅          |
+| B(logging) → B(trpc)           | Request middleware injects `requestId` in context       | ✅          |
+| A(hono) → C(auth)              | Hono app → `app.route('/api/auth', authHandler)`        | ✅          |
+| A(db) → C(auth)                | Drizzle `db` → Better Auth uses same instance           | ✅          |
+| C(sessions) → D(frontend)      | Session API → settings/sessions page                    | ✅          |
+| C(impersonation) → D(frontend) | Impersonate API → ImpersonationBanner                   | ✅          |
+| B(trpc) → D(frontend)          | tRPC router type → `createTRPCClient<AppRouter>`        | ✅          |
+| C(auth) → D(frontend)          | Auth API → `createAuthClient({ baseURL })`              | ✅          |
+| B(trpc guards) → D(RoleGate)   | Backend rejects → frontend hides (defense in depth)     | ✅          |
+| B(logging) → D(dev-menu)       | Request data → RequestInspector (via tRPC client state) | ✅          |
+| A-D(\*) → E(docker)            | All apps/packages → Dockerfile build                    | ✅          |
+| A-D(\*) → E(init)              | `@gemtest/*` names + `[MODULE:x]` markers → init script | ✅          |
+| A-D(\*) → E(preview)           | Built images → `pnpm preview` validates prod-like       | ✅          |
+| A-E(\*) → F(docs)              | Real code → documentation examples                      | ✅          |
 
 ### Resolved Design Decisions
 
