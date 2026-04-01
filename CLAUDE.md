@@ -64,13 +64,22 @@ Monorepo boilerplate for web applications (with or without frontend), optimized 
 | `docs/superpowers/specs/2026-03-30-gemtest-v2-boilerplate-design.md` | Understanding overall design and decisions    |
 | `docs/superpowers/specs/2026-03-31-security-hardening-plan.md`       | Implementing security measures                |
 | `docs/superpowers/plans/2026-03-31-gemtest-v2-overview.md`           | Understanding plan contracts and dependencies |
-| `docs/superpowers/plans/2026-03-31-plan-a-foundation.md`             | Executing Plan A (Foundation)                 |
+| `docs/superpowers/plans/2026-03-31-plan-a-foundation.md`             | Plan A reference (COMPLETED 2026-04-01)       |
+
+## Setup
+
+```bash
+cp .env.example .env           # Copy env template (edit AUTH_SECRET)
+docker compose up db -d        # Start PostgreSQL
+pnpm install                   # Install dependencies
+pnpm --filter @gemtest/api db:push  # Push schema to DB
+```
 
 ## Commands
 
 ```bash
-docker compose up db           # Start PostgreSQL
-pnpm dev                       # Start API + web (hot reload)
+docker compose up db -d        # Start PostgreSQL
+pnpm --filter @gemtest/api dev # Start API (hot reload, port 4000)
 pnpm lint                      # ESLint strict
 pnpm format:check              # Prettier check
 pnpm typecheck                 # tsc --noEmit all packages
@@ -83,6 +92,8 @@ pnpm preview                   # Build + run in Docker (prod-like)
 
 Always run after completing a task:
 
-1. `npx eslint <changed-files>` — 0 errors
-2. `pnpm typecheck` — if code was changed
-3. E2E tests if runtime code changed (requires dev server)
+1. `pnpm lint` — 0 errors
+2. `pnpm typecheck` — 0 errors
+3. `pnpm test` — all passing
+4. `pnpm format:check` — all files formatted
+5. E2E tests if runtime code changed (requires dev server)
