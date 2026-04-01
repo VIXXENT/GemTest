@@ -1,5 +1,5 @@
 import { config } from 'dotenv'
-import { z } from 'zod'
+import type { z } from 'zod'
 
 import type { EnvConfig } from './schema.js'
 import { envSchema } from './schema.js'

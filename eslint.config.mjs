@@ -25,15 +25,9 @@ const config = tseslint.config(
     rules: {
       // --- Semicolons ---
       semi: ['error', 'never'],
-      '@typescript-eslint/member-delimiter-style': [
-        'error',
-        {
-          multiline: { delimiter: 'none' },
-          singleline: { delimiter: 'semi', requireLast: false },
-        },
-      ],
 
-      // --- Type annotations ---
+      // --- Type annotations (typedef requires explicit, no-inferrable conflicts) ---
+      '@typescript-eslint/no-inferrable-types': 'off',
       '@typescript-eslint/typedef': [
         'error',
         {
