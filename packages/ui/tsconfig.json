@@ -1,0 +1,9 @@
+{
+  "extends": "@gemtest/config-ts/base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}
