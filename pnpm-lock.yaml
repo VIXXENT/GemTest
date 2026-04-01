@@ -47,6 +47,12 @@ importers:
       '@voiler/config-env':
         specifier: workspace:*
         version: link:../../packages/config-env
+      '@voiler/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@voiler/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       '@voiler/schema':
         specifier: workspace:*
         version: link:../../packages/schema
