@@ -3,12 +3,30 @@
  *
  * Domain layer — entities, value objects, and domain errors.
  * This package has ZERO infrastructure dependencies.
- *
- * @remarks
- * Populated in Plan B with:
- * - UserEntity (domain entity with branded types)
- * - Value objects: Email, Password, UserId
- * - Domain errors: InvalidEmail, UserNotFound, etc.
- *
- * Currently empty — serves as a structural placeholder.
  */
+
+// Brand utility
+export type { Brand } from "./types/brand"
+
+// Domain errors
+export type { DomainError } from "./errors/domain-error"
+export {
+  invalidEmail,
+  invalidPassword,
+  userAlreadyExists,
+  userNotFound,
+  weakPassword,
+} from "./errors/domain-error"
+
+// Value objects
+export type { Email } from "./value-objects/email"
+export { createEmail } from "./value-objects/email"
+
+export type { Password } from "./value-objects/password"
+export { createPassword } from "./value-objects/password"
+
+export type { UserId } from "./value-objects/user-id"
+export { createUserId } from "./value-objects/user-id"
+
+// Entities
+export type { UserEntity } from "./entities/user"
