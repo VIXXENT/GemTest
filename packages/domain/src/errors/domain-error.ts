@@ -5,48 +5,38 @@
  * and a human-readable `message`.
  */
 export type DomainError =
-  | { readonly tag: "InvalidEmail"; readonly message: string }
-  | { readonly tag: "InvalidPassword"; readonly message: string }
-  | { readonly tag: "WeakPassword"; readonly message: string }
-  | { readonly tag: "UserNotFound"; readonly message: string }
-  | { readonly tag: "UserAlreadyExists"; readonly message: string }
+  | { readonly tag: 'InvalidEmail'; readonly message: string }
+  | { readonly tag: 'InvalidPassword'; readonly message: string }
+  | { readonly tag: 'WeakPassword'; readonly message: string }
+  | { readonly tag: 'UserNotFound'; readonly message: string }
+  | { readonly tag: 'UserAlreadyExists'; readonly message: string }
 
 /** Create an InvalidEmail domain error. */
-export const invalidEmail: (
-  message: string,
-) => DomainError = (message) => ({
-  tag: "InvalidEmail",
+export const invalidEmail: (message: string) => DomainError = (message) => ({
+  tag: 'InvalidEmail',
   message,
 })
 
 /** Create an InvalidPassword domain error. */
-export const invalidPassword: (
-  message: string,
-) => DomainError = (message) => ({
-  tag: "InvalidPassword",
+export const invalidPassword: (message: string) => DomainError = (message) => ({
+  tag: 'InvalidPassword',
   message,
 })
 
 /** Create a WeakPassword domain error. */
-export const weakPassword: (
-  message: string,
-) => DomainError = (message) => ({
-  tag: "WeakPassword",
+export const weakPassword: (message: string) => DomainError = (message) => ({
+  tag: 'WeakPassword',
   message,
 })
 
 /** Create a UserNotFound domain error. */
-export const userNotFound: (
-  message: string,
-) => DomainError = (message) => ({
-  tag: "UserNotFound",
+export const userNotFound: (message: string) => DomainError = (message) => ({
+  tag: 'UserNotFound',
   message,
 })
 
 /** Create a UserAlreadyExists domain error. */
-export const userAlreadyExists: (
-  message: string,
-) => DomainError = (message) => ({
-  tag: "UserAlreadyExists",
+export const userAlreadyExists: (message: string) => DomainError = (message) => ({
+  tag: 'UserAlreadyExists',
   message,
 })

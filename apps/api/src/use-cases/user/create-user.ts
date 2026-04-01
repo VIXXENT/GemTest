@@ -1,10 +1,6 @@
-import type {
-  AppError,
-  IPasswordService,
-  IUserRepository,
-} from "@voiler/core"
-import type { UserEntity } from "@voiler/domain"
-import type { ResultAsync } from "neverthrow"
+import type { AppError, IPasswordService, IUserRepository } from '@voiler/core'
+import type { UserEntity } from '@voiler/domain'
+import type { ResultAsync } from 'neverthrow'
 
 /**
  * Dependencies injected into the createUser use case.
@@ -33,24 +29,18 @@ interface CreateUserParams {
  */
 export const createCreateUser: (
   deps: CreateUserDeps,
-) => (
-  params: CreateUserParams,
-) => ResultAsync<UserEntity, AppError> = (deps) => (
-  params,
-) => {
+) => (params: CreateUserParams) => ResultAsync<UserEntity, AppError> = (deps) => (params) => {
   const { userRepository, passwordService } = deps
   const { name, email, password } = params
 
-  return passwordService
-    .hash({ plaintext: password })
-    .andThen((passwordHash) =>
-      userRepository.create({
-        data: {
-          name,
-          email,
-          passwordHash,
-          role: "user",
-        },
-      }),
-    )
+  return passwordService.hash({ plaintext: password }).andThen((passwordHash) =>
+    userRepository.create({
+      data: {
+        name,
+        email,
+        passwordHash,
+        role: 'user',
+      },
+    }),
+  )
 }

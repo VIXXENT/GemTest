@@ -1,10 +1,10 @@
-import type { DomainError } from "@voiler/domain"
+import type { DomainError } from '@voiler/domain'
 
 /**
  * An error originating from infrastructure (DB, network, etc.).
  */
 export interface InfrastructureError {
-  readonly tag: "InfrastructureError"
+  readonly tag: 'InfrastructureError'
   readonly message: string
   readonly cause?: unknown
 }
@@ -13,7 +13,7 @@ export interface InfrastructureError {
  * An error caused by invalid input that failed validation.
  */
 export interface ValidationError {
-  readonly tag: "ValidationError"
+  readonly tag: 'ValidationError'
   readonly message: string
   readonly field?: string
 }
@@ -24,18 +24,16 @@ export interface ValidationError {
  * Superset of domain errors, extended with infrastructure
  * and validation variants for use in port return types.
  */
-export type AppError =
-  | DomainError
-  | InfrastructureError
-  | ValidationError
+export type AppError = DomainError | InfrastructureError | ValidationError
 
 /**
  * Create an InfrastructureError.
  */
-export const infrastructureError: (
-  params: { message: string; cause?: unknown },
-) => InfrastructureError = (params) => ({
-  tag: "InfrastructureError",
+export const infrastructureError: (params: {
+  message: string
+  cause?: unknown
+}) => InfrastructureError = (params) => ({
+  tag: 'InfrastructureError',
   message: params.message,
   cause: params.cause,
 })
@@ -43,10 +41,10 @@ export const infrastructureError: (
 /**
  * Create a ValidationError.
  */
-export const validationError: (
-  params: { message: string; field?: string },
-) => ValidationError = (params) => ({
-  tag: "ValidationError",
+export const validationError: (params: { message: string; field?: string }) => ValidationError = (
+  params,
+) => ({
+  tag: 'ValidationError',
   message: params.message,
   field: params.field,
 })

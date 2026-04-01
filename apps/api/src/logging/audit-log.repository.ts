@@ -1,26 +1,20 @@
-import {
-  jsonb,
-  pgTable,
-  text,
-  timestamp,
-  uuid,
-} from "drizzle-orm/pg-core"
+import { jsonb, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
-import type { DbClient } from "../db/index.js"
+import type { DbClient } from '../db/index.js'
 
 /**
  * Audit log table for tracking use-case executions
  * and request-level actions across the application.
  */
 // eslint-disable-next-line @typescript-eslint/typedef
-const AuditLog = pgTable("audit_log", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  requestId: text("request_id").notNull(),
-  action: text("action").notNull(),
-  userId: text("user_id"),
-  entityId: text("entity_id"),
-  metadata: jsonb("metadata"),
-  createdAt: timestamp("created_at", {
+const AuditLog = pgTable('audit_log', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  requestId: text('request_id').notNull(),
+  action: text('action').notNull(),
+  userId: text('user_id'),
+  entityId: text('entity_id'),
+  metadata: jsonb('metadata'),
+  createdAt: timestamp('created_at', {
     withTimezone: true,
   })
     .notNull()
@@ -51,9 +45,7 @@ interface WriteAuditLogParams {
  * Fire-and-forget -- does not block the request.
  * Errors are logged to console but never thrown.
  */
-const writeAuditLog: (
-  params: WriteAuditLogParams,
-) => void = (params) => {
+const writeAuditLog: (params: WriteAuditLogParams) => void = (params) => {
   const { db, entry } = params
 
   void db
@@ -69,8 +61,8 @@ const writeAuditLog: (
     .catch((error: unknown) => {
       console.error(
         JSON.stringify({
-          level: "error",
-          message: "Failed to write audit log",
+          level: 'error',
+          message: 'Failed to write audit log',
           action: entry.action,
           requestId: entry.requestId,
           error: String(error),

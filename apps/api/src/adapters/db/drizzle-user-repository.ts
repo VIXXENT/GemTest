@@ -221,9 +221,7 @@ const createDrizzleUserRepository: (
  */
 const createFindPasswordHash: (
   params: CreateDrizzleUserRepositoryParams,
-) => (params: { email: string }) => ResultAsync<string | null, AppError> = (
-  repoParams,
-) => {
+) => (params: { email: string }) => ResultAsync<string | null, AppError> = (repoParams) => {
   const { db } = repoParams
 
   return (queryParams) => {

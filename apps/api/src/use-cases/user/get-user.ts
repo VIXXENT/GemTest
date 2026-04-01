@@ -1,6 +1,6 @@
-import type { AppError, IUserRepository } from "@voiler/core"
-import type { UserEntity } from "@voiler/domain"
-import type { ResultAsync } from "neverthrow"
+import type { AppError, IUserRepository } from '@voiler/core'
+import type { UserEntity } from '@voiler/domain'
+import type { ResultAsync } from 'neverthrow'
 
 /**
  * Dependencies injected into the getUser use case.
@@ -22,11 +22,7 @@ interface GetUserParams {
  */
 export const createGetUser: (
   deps: GetUserDeps,
-) => (
-  params: GetUserParams,
-) => ResultAsync<UserEntity | null, AppError> = (
-  deps,
-) => (params) => {
+) => (params: GetUserParams) => ResultAsync<UserEntity | null, AppError> = (deps) => (params) => {
   const { userRepository } = deps
   const { id } = params
 

@@ -1,6 +1,6 @@
-import type { MiddlewareHandler } from "hono"
+import type { MiddlewareHandler } from 'hono'
 
-declare module "hono" {
+declare module 'hono' {
   interface ContextVariableMap {
     requestId: string
   }
@@ -46,11 +46,11 @@ const requestLogger: () => MiddlewareHandler = () => {
     const path: string = c.req.path
     const startMs: number = Date.now()
 
-    c.set("requestId", requestId)
+    c.set('requestId', requestId)
 
     const startLog: RequestStartLog = {
-      level: "info",
-      event: "request.start",
+      level: 'info',
+      event: 'request.start',
       requestId,
       method,
       path,
@@ -64,8 +64,8 @@ const requestLogger: () => MiddlewareHandler = () => {
     const durationMs: number = Date.now() - startMs
 
     const completeLog: RequestCompleteLog = {
-      level: "info",
-      event: "request.complete",
+      level: 'info',
+      event: 'request.complete',
       requestId,
       method,
       path,

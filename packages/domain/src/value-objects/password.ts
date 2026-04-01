@@ -1,14 +1,11 @@
-import { ok, err, type Result } from "neverthrow"
+import { ok, err, type Result } from 'neverthrow'
 
-import type { DomainError } from "../errors/domain-error"
-import {
-  invalidPassword,
-  weakPassword,
-} from "../errors/domain-error"
-import type { Brand } from "../types/brand"
+import type { DomainError } from '../errors/domain-error'
+import { invalidPassword, weakPassword } from '../errors/domain-error'
+import type { Brand } from '../types/brand'
 
 /** A branded string representing a validated password. */
-export type Password = Brand<string, "Password">
+export type Password = Brand<string, 'Password'>
 
 /**
  * Parameters for creating a Password.
@@ -30,27 +27,17 @@ const HAS_DIGIT: RegExp = /\d/
  * @returns A Result containing the branded Password
  *          or a DomainError.
  */
-export const createPassword: (
-  params: CreatePasswordParams,
-) => Result<Password, DomainError> = (params) => {
+export const createPassword: (params: CreatePasswordParams) => Result<Password, DomainError> = (
+  params,
+) => {
   const { value } = params
 
   if (value.length < MIN_LENGTH) {
-    return err(
-      invalidPassword(
-        `Password must be at least ${String(MIN_LENGTH)}`
-          + " characters",
-      ),
-    )
+    return err(invalidPassword(`Password must be at least ${String(MIN_LENGTH)}` + ' characters'))
   }
 
   if (!HAS_LETTER.test(value) || !HAS_DIGIT.test(value)) {
-    return err(
-      weakPassword(
-        "Password must contain at least one letter"
-          + " and one digit",
-      ),
-    )
+    return err(weakPassword('Password must contain at least one letter' + ' and one digit'))
   }
 
   return ok(value as Password)

@@ -1,5 +1,5 @@
-import type { Email } from "../value-objects/email"
-import type { UserId } from "../value-objects/user-id"
+import type { Email } from '../value-objects/email'
+import type { UserId } from '../value-objects/user-id'
 
 /**
  * Domain entity representing a user.
