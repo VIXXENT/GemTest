@@ -55,7 +55,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
       }
     }
 
-    await navigate({ to: '/' })
+    await navigate({ to: '/dashboard' })
   }
 
   return (

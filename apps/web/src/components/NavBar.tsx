@@ -18,6 +18,12 @@ const NavBar = () => {
         <div className="flex items-center gap-4">
           {isAuthenticated ? (
             <>
+              <Link
+                to="/dashboard"
+                className="text-sm font-medium text-gray-600 hover:text-gray-900"
+              >
+                Dashboard
+              </Link>
               <span className="text-sm text-gray-600">
                 {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
                 {session.data?.user?.name ?? 'User'}
