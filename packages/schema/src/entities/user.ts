@@ -1,25 +1,31 @@
-import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
 
 /**
  * User table definition for PostgreSQL via Drizzle ORM.
- * Single source of truth for the User entity schema.
+ * Schema owned by Better Auth with custom `role` field.
  *
  * @remarks
- * Uses UUID primary keys for security (non-enumerable).
- * Timestamps use `defaultNow()` for automatic creation tracking.
- * The `role` column defaults to 'user' — extended roles added in Plan C.
+ * Better Auth expects: id (text), name, email, emailVerified,
+ * image, createdAt, updatedAt. Passwords are stored in the
+ * `account` table, not here.
+ * The `role` field is a custom extension for RBAC.
  */
 // eslint-disable-next-line @typescript-eslint/typedef
 const User = pgTable('user', {
-  id: uuid('id').defaultRandom().primaryKey(),
+  id: text('id').primaryKey(),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
-  passwordHash: text('password_hash').notNull(),
+  emailVerified: boolean('email_verified').notNull().default(false),
+  image: text('image'),
   role: text('role').notNull().default('user'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp('created_at', {
+    withTimezone: true,
+  }).notNull(),
+  updatedAt: timestamp('updated_at', {
+    withTimezone: true,
+  }).notNull(),
 })
 
 /**

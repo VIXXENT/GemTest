@@ -2,15 +2,9 @@ import type { AppError } from '@voiler/core'
 import type { UserEntity } from '@voiler/domain'
 import type { ResultAsync } from 'neverthrow'
 
-import { createArgon2PasswordService } from './adapters/auth/argon2-password-service.js'
-import { createJwtTokenService } from './adapters/auth/jwt-token-service.js'
-import {
-  createDrizzleUserRepository,
-  createFindPasswordHash,
-} from './adapters/db/drizzle-user-repository.js'
+import { createDrizzleUserRepository } from './adapters/db/drizzle-user-repository.js'
 import type { DbClient } from './db/index.js'
-import type { AuthResult } from './use-cases/auth/authenticate.js'
-import { createAuthenticate } from './use-cases/auth/authenticate.js'
+import { withAuditLog, type AuditableParams } from './logging/use-case-logger.js'
 import { createCreateUser } from './use-cases/user/create-user.js'
 import { createGetUser } from './use-cases/user/get-user.js'
 import { createListUsers } from './use-cases/user/list-users.js'
@@ -20,7 +14,6 @@ import { createListUsers } from './use-cases/user/list-users.js'
  */
 interface CreateContainerParams {
   readonly db: DbClient
-  readonly authSecret: string
 }
 
 /**
@@ -30,17 +23,16 @@ interface CreateContainerParams {
  * injection into tRPC procedures.
  */
 interface Container {
-  readonly createUser: (params: {
-    name: string
-    email: string
-    password: string
-  }) => ResultAsync<UserEntity, AppError>
-  readonly getUser: (params: { id: string }) => ResultAsync<UserEntity | null, AppError>
+  readonly createUser: (
+    params: {
+      name: string
+      email: string
+    } & AuditableParams,
+  ) => ResultAsync<UserEntity, AppError>
+  readonly getUser: (
+    params: { id: string } & AuditableParams,
+  ) => ResultAsync<UserEntity | null, AppError>
   readonly listUsers: () => ResultAsync<UserEntity[], AppError>
-  readonly authenticate: (params: {
-    email: string
-    password: string
-  }) => ResultAsync<AuthResult, AppError>
 }
 
 /**
@@ -51,48 +43,48 @@ interface Container {
  * interfaces defined in @voiler/core.
  */
 const createContainer: (params: CreateContainerParams) => Container = (params) => {
-  const { db, authSecret } = params
+  const { db } = params
 
   // --- Adapters ---
   // eslint-disable-next-line @typescript-eslint/typedef
   const userRepository = createDrizzleUserRepository({
     db,
   })
-  // eslint-disable-next-line @typescript-eslint/typedef
-  const passwordService = createArgon2PasswordService()
-  // eslint-disable-next-line @typescript-eslint/typedef
-  const tokenService = createJwtTokenService({
-    secret: authSecret,
+
+  // --- Use Cases (raw) ---
+  const rawCreateUser: Container['createUser'] = createCreateUser({
+    userRepository,
   })
-  // eslint-disable-next-line @typescript-eslint/typedef
-  const findPasswordHash = createFindPasswordHash({
+
+  const rawGetUser: Container['getUser'] = createGetUser({
+    userRepository,
+  })
+
+  const rawListUsers: Container['listUsers'] = createListUsers({ userRepository })
+
+  // --- Wrap with audit logging ---
+  const createUser: Container['createUser'] = withAuditLog({
+    name: 'user.create',
+    useCase: rawCreateUser,
+    getEntityId: (result) => String(result.id),
     db,
   })
 
-  // --- Use Cases ---
-  const createUser: Container['createUser'] = createCreateUser({
-    userRepository,
-    passwordService,
+  const getUser: Container['getUser'] = withAuditLog({
+    name: 'user.get',
+    useCase: rawGetUser,
+    getEntityId: (result) => (result ? String(result.id) : undefined),
+    db,
   })
 
-  const getUser: Container['getUser'] = createGetUser({
-    userRepository,
-  })
-
-  const listUsers: Container['listUsers'] = createListUsers({ userRepository })
-
-  const authenticate: Container['authenticate'] = createAuthenticate({
-    userRepository,
-    passwordService,
-    tokenService,
-    findPasswordHash,
-  })
+  // listUsers is a read-all query with no params —
+  // audit logging is not applicable (no entity to track).
+  const listUsers: Container['listUsers'] = rawListUsers
 
   return {
     createUser,
     getUser,
     listUsers,
-    authenticate,
   }
 }
 

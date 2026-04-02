@@ -18,6 +18,8 @@ export { User, UserSelectSchema, UserInsertSchema } from './entities/user.js'
 
 export type { UserSelect, UserInsert } from './entities/user.js'
 
+export { Session, Account, Verification } from './entities/auth.js'
+
 // --- Inputs (tRPC procedure validation) ---
 export { CreateUserInputSchema } from './inputs/create-user.js'
 export type { CreateUserInput } from './inputs/create-user.js'

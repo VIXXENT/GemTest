@@ -4,6 +4,8 @@ import { Hono } from 'hono'
 import { bodyLimit } from 'hono/body-limit'
 import { cors } from 'hono/cors'
 
+import { createAuth } from './auth/index.js'
+import './auth/types.js'
 import { createContainer } from './container.js'
 import { createDb } from './db/index.js'
 import { createHealthRoute } from './http/index.js'
@@ -43,7 +45,6 @@ const db = createDb({ databaseUrl: env.DATABASE_URL })
 // eslint-disable-next-line @typescript-eslint/typedef
 const container = createContainer({
   db,
-  authSecret: env.AUTH_SECRET,
 })
 
 /**
@@ -51,8 +52,28 @@ const container = createContainer({
  * In development, allow localhost frontend.
  * In production, this should be set via environment variable.
  */
+const defaultDevOrigins: string[] = ['http://localhost:3000', 'http://localhost:4000']
 const allowedOrigins: string[] =
-  env.NODE_ENV === 'development' ? ['http://localhost:3000', 'http://localhost:4000'] : []
+  env.TRUSTED_ORIGINS.length > 0
+    ? env.TRUSTED_ORIGINS
+    : env.NODE_ENV === 'development'
+      ? defaultDevOrigins
+      : []
+
+/**
+ * Create the Better Auth instance.
+ * Handles authentication routes at /api/auth/*.
+ */
+// eslint-disable-next-line @typescript-eslint/typedef
+const auth = createAuth({
+  db,
+  secret: env.AUTH_SECRET,
+  trustedOrigins: allowedOrigins,
+  googleClientId: env.GOOGLE_CLIENT_ID,
+  googleClientSecret: env.GOOGLE_CLIENT_SECRET,
+  githubClientId: env.GITHUB_CLIENT_ID,
+  githubClientSecret: env.GITHUB_CLIENT_SECRET,
+})
 
 /**
  * Create and configure the Hono application.
@@ -71,6 +92,8 @@ const app = new Hono()
 
 // --- Middleware ---
 app.use('*', createRateLimiter())
+// Stricter rate limit for auth endpoints (10 req/min)
+app.use('/api/auth/*', createRateLimiter({ windowMs: 60_000, max: 10 }))
 app.use('*', requestLogger())
 app.use('*', securityHeaders())
 app.use(
@@ -94,6 +117,30 @@ app.use(
   }),
 )
 
+// --- Better Auth routes ---
+app.on(['POST', 'GET'], '/api/auth/**', (c) => {
+  return auth.handler(c.req.raw)
+})
+
+// --- Session extraction middleware ---
+// Skip for Better Auth routes (they handle their own sessions)
+// eslint-disable-next-line max-params
+app.use('*', async (c, next) => {
+  if (c.req.path.startsWith('/api/auth/')) {
+    c.set('user', null)
+    c.set('session', null)
+    await next()
+    return
+  }
+  // eslint-disable-next-line @typescript-eslint/typedef
+  const session = await auth.api.getSession({
+    headers: c.req.raw.headers,
+  })
+  c.set('user', session?.user ?? null)
+  c.set('session', session?.session ?? null)
+  await next()
+})
+
 // --- Routes ---
 // eslint-disable-next-line @typescript-eslint/typedef
 const healthRoute = createHealthRoute({ db, startTime })
@@ -106,8 +153,32 @@ const appRouter = createAppRouter({
     getUser: container.getUser,
     listUsers: container.listUsers,
   },
-  auth: {
-    authenticate: container.authenticate,
+  session: {
+    listSessions: (p) => auth.api.listSessions({ headers: p.headers }),
+    revokeSession: (p) =>
+      auth.api.revokeSession({
+        headers: p.headers,
+        body: { token: p.token },
+      }),
+    revokeOtherSessions: (p) =>
+      auth.api.revokeOtherSessions({
+        headers: p.headers,
+      }),
+    revokeSessions: (p) =>
+      auth.api.revokeSessions({
+        headers: p.headers,
+      }),
+  },
+  admin: {
+    impersonateUser: (p) =>
+      auth.api.impersonateUser({
+        headers: p.headers,
+        body: { userId: p.userId },
+      }),
+    stopImpersonating: (p) =>
+      auth.api.stopImpersonating({
+        headers: p.headers,
+      }),
   },
 })
 

@@ -6,7 +6,7 @@ import { CreateUserInputSchema } from '@voiler/schema'
 import type { ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 
-import { publicProcedure, router } from '../context.js'
+import { authedProcedure, publicProcedure, router } from '../context.js'
 
 /**
  * Dependencies for the user router factory.
@@ -15,9 +15,14 @@ interface CreateUserRouterParams {
   readonly createUser: (params: {
     name: string
     email: string
-    password: string
+    requestId?: string
+    userId?: string
   }) => ResultAsync<UserEntity, AppError>
-  readonly getUser: (params: { id: string }) => ResultAsync<UserEntity | null, AppError>
+  readonly getUser: (params: {
+    id: string
+    requestId?: string
+    userId?: string
+  }) => ResultAsync<UserEntity | null, AppError>
   readonly listUsers: () => ResultAsync<UserEntity[], AppError>
 }
 
@@ -56,10 +61,16 @@ const mapToPublicUser: (params: { entity: UserEntity }) => PublicUser = (params)
  * Used inside `.match()` error branches.
  */
 const throwTrpcError: (params: { error: AppError }) => never = (params) => {
-  throw new TRPCError({
-    code: mapErrorCode({ tag: params.error.tag }),
-    message: params.error.message,
+  const code: TRPCError['code'] = mapErrorCode({
+    tag: params.error.tag,
   })
+
+  // Sanitize infrastructure errors — never leak
+  // internal details (DB messages, stack traces).
+  const message: string =
+    params.error.tag === 'InfrastructureError' ? 'Internal server error' : params.error.message
+
+  throw new TRPCError({ code, message })
 }
 
 /**
@@ -79,7 +90,6 @@ const createUserRouter: (params: CreateUserRouterParams) => ReturnType<typeof ro
       const result: Awaited<ReturnType<typeof createUser>> = await createUser({
         name: opts.input.name,
         email: opts.input.email,
-        password: opts.input.password,
       })
 
       return result.match(
@@ -88,7 +98,7 @@ const createUserRouter: (params: CreateUserRouterParams) => ReturnType<typeof ro
       )
     }),
 
-    getById: publicProcedure.input(z.object({ id: z.string().uuid() })).query(async (opts) => {
+    getById: authedProcedure.input(z.object({ id: z.string().min(1) })).query(async (opts) => {
       const result: Awaited<ReturnType<typeof getUser>> = await getUser({ id: opts.input.id })
 
       return result.match(
@@ -106,7 +116,7 @@ const createUserRouter: (params: CreateUserRouterParams) => ReturnType<typeof ro
       )
     }),
 
-    list: publicProcedure.query(async () => {
+    list: authedProcedure.query(async () => {
       const result: Awaited<ReturnType<typeof listUsers>> = await listUsers()
 
       return result.match(

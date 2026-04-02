@@ -39,6 +39,9 @@ const createTrpcRoute: (params: CreateTrpcRouteParams) => Hono = (params) => {
         const ctxParams: CreateContextParams = {
           db,
           requestId,
+          user: c.get('user') ?? null,
+          session: c.get('session') ?? null,
+          headers: c.req.raw.headers,
         }
 
         return createContext(ctxParams)
@@ -54,7 +57,7 @@ export type { CreateTrpcRouteParams }
 
 // Re-exports for convenience
 export { createContext } from './context.js'
-export type { TRPCContext, CreateContextParams } from './context.js'
+export type { TRPCContext, AuthedTRPCContext, CreateContextParams } from './context.js'
 
 export {
   router,

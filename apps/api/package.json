@@ -23,7 +23,8 @@
     "@voiler/domain": "workspace:*",
     "@voiler/schema": "workspace:*",
     "argon2": "^0.44.0",
-    "drizzle-orm": "^0.38.0",
+    "better-auth": "^1.5.6",
+    "drizzle-orm": "^0.38.4",
     "hono": "^4.7.0",
     "hono-rate-limiter": "^0.4.0",
     "jose": "^6.2.2",
@@ -34,7 +35,7 @@
   "devDependencies": {
     "@types/node": "^22.0.0",
     "@voiler/config-ts": "workspace:*",
-    "drizzle-kit": "^0.30.0",
+    "drizzle-kit": "^0.30.6",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0"
   }

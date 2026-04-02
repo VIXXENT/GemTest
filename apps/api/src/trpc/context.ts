@@ -1,5 +1,6 @@
-import { initTRPC } from '@trpc/server'
+import { initTRPC, TRPCError } from '@trpc/server'
 
+import type { AuthSession, AuthUser } from '../auth/types.js'
 import type { DbClient } from '../db/index.js'
 
 /**
@@ -12,6 +13,19 @@ interface TRPCContext {
   readonly [key: string]: unknown
   readonly db: DbClient
   readonly requestId: string
+  readonly user: AuthUser | null
+  readonly session: AuthSession | null
+  readonly headers: Headers
+}
+
+/**
+ * tRPC context with guaranteed non-null user and session.
+ * Available inside `authedProcedure` and its derivatives.
+ */
+interface AuthedTRPCContext extends TRPCContext {
+  readonly user: AuthUser
+  readonly session: AuthSession
+  readonly headers: Headers
 }
 
 /**
@@ -20,6 +34,9 @@ interface TRPCContext {
 interface CreateContextParams {
   readonly db: DbClient
   readonly requestId: string
+  readonly user: AuthUser | null
+  readonly session: AuthSession | null
+  readonly headers: Headers
 }
 
 /**
@@ -28,6 +45,9 @@ interface CreateContextParams {
 const createContext: (params: CreateContextParams) => TRPCContext = (params) => ({
   db: params.db,
   requestId: params.requestId,
+  user: params.user,
+  session: params.session,
+  headers: params.headers,
 })
 
 /**
@@ -49,26 +69,61 @@ const router = t.router
 const publicProcedure = t.procedure
 
 /**
- * Authenticated procedure placeholder.
- * Actual auth check will be added in Plan C.
+ * Authenticated procedure — rejects with 401 if no session.
+ * Narrows context to `AuthedTRPCContext` for downstream use.
  */
 // eslint-disable-next-line @typescript-eslint/typedef
-const authedProcedure = t.procedure
+const authedProcedure = t.procedure.use(async (opts) => {
+  if (!opts.ctx.user || !opts.ctx.session) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: 'Authentication required',
+    })
+  }
+
+  return opts.next({
+    ctx: {
+      ...opts.ctx,
+      user: opts.ctx.user,
+      session: opts.ctx.session,
+    },
+  })
+})
 
 /**
- * Admin procedure placeholder.
- * Actual role check will be added in Plan C.
+ * Admin procedure — rejects with 403 if role is not 'admin'.
+ * Requires authentication first.
  */
 // eslint-disable-next-line @typescript-eslint/typedef
-const adminProcedure = t.procedure
+const adminProcedure = authedProcedure.use(async (opts) => {
+  if (opts.ctx.user.role !== 'admin') {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'Admin access required',
+    })
+  }
+
+  return opts.next({ ctx: opts.ctx })
+})
 
 /**
- * Dev-only procedure placeholder.
- * Actual environment check will be added in Plan C.
+ * Dev procedure — rejects with 403 if role is not 'dev' or 'admin'.
+ * Admin is a superset of dev access.
+ * Requires authentication first.
  */
 // eslint-disable-next-line @typescript-eslint/typedef
-const devProcedure = t.procedure
+const devProcedure = authedProcedure.use(async (opts) => {
+  const role: string | undefined = opts.ctx.user.role
+  if (role !== 'dev' && role !== 'admin') {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'Developer access required',
+    })
+  }
+
+  return opts.next({ ctx: opts.ctx })
+})
 
 export { createContext, router, publicProcedure }
 export { authedProcedure, adminProcedure, devProcedure }
-export type { TRPCContext, CreateContextParams }
+export type { TRPCContext, AuthedTRPCContext, CreateContextParams }
