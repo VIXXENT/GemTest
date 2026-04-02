@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Outlet, createRootRoute } from '@tanstack/react-router'
 
+import { DevMenu } from '~/components/dev-menu/DevMenu'
 import { ImpersonationBanner } from '~/components/ImpersonationBanner'
 import { NavBar } from '~/components/NavBar'
 import { I18nProvider } from '~/lib/i18n'
@@ -29,6 +30,7 @@ const RootLayout = () => (
         </div>
       </I18nProvider>
     </QueryClientProvider>
+    <DevMenu />
     {/* @ts-expect-error — tRPC Provider collision */}
   </trpc.Provider>
 )
