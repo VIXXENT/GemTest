@@ -16,5 +16,9 @@
   "devDependencies": {
     "@voiler/config-ts": "workspace:*",
     "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "@voiler/domain": "workspace:*",
+    "neverthrow": "^8.2.0"
   }
 }

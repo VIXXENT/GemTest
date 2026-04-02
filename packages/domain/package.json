@@ -11,10 +11,14 @@
   },
   "scripts": {
     "lint": "eslint src/",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@voiler/config-ts": "workspace:*",
     "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "neverthrow": "^8.2.0"
   }
 }
