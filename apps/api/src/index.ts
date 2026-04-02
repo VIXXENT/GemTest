@@ -53,8 +53,13 @@ const container = createContainer({
  * In development, allow localhost frontend.
  * In production, this should be set via environment variable.
  */
+const defaultDevOrigins: string[] = ['http://localhost:3000', 'http://localhost:4000']
 const allowedOrigins: string[] =
-  env.NODE_ENV === 'development' ? ['http://localhost:3000', 'http://localhost:4000'] : []
+  env.TRUSTED_ORIGINS.length > 0
+    ? env.TRUSTED_ORIGINS
+    : env.NODE_ENV === 'development'
+      ? defaultDevOrigins
+      : []
 
 /**
  * Create the Better Auth instance.
@@ -120,8 +125,15 @@ app.on(['POST', 'GET'], '/api/auth/**', (c) => {
 })
 
 // --- Session extraction middleware ---
+// Skip for Better Auth routes (they handle their own sessions)
 // eslint-disable-next-line max-params
 app.use('*', async (c, next) => {
+  if (c.req.path.startsWith('/api/auth/')) {
+    c.set('user', null)
+    c.set('session', null)
+    await next()
+    return
+  }
   // eslint-disable-next-line @typescript-eslint/typedef
   const session = await auth.api.getSession({
     headers: c.req.raw.headers,

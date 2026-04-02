@@ -15,24 +15,45 @@ const AUTH_SECRET_MIN_LENGTH: number = 32
  * DATABASE_URL must be a valid PostgreSQL connection string.
  */
 // eslint-disable-next-line @typescript-eslint/typedef
-const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.coerce.number().int().positive().default(4000),
-  DATABASE_URL: z
-    .string()
-    .min(1, 'DATABASE_URL is required')
-    .startsWith('postgresql://', 'DATABASE_URL must be a PostgreSQL connection string'),
-  AUTH_SECRET: z
-    .string()
-    .min(
-      AUTH_SECRET_MIN_LENGTH,
-      `AUTH_SECRET must be at least ${String(AUTH_SECRET_MIN_LENGTH)} characters`,
-    ),
-  GOOGLE_CLIENT_ID: z.string().optional(),
-  GOOGLE_CLIENT_SECRET: z.string().optional(),
-  GITHUB_CLIENT_ID: z.string().optional(),
-  GITHUB_CLIENT_SECRET: z.string().optional(),
-})
+const envSchema = z
+  .object({
+    NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+    PORT: z.coerce.number().int().positive().default(4000),
+    DATABASE_URL: z
+      .string()
+      .min(1, 'DATABASE_URL is required')
+      .startsWith('postgresql://', 'DATABASE_URL must be a PostgreSQL connection string'),
+    AUTH_SECRET: z
+      .string()
+      .min(
+        AUTH_SECRET_MIN_LENGTH,
+        `AUTH_SECRET must be at least ${String(AUTH_SECRET_MIN_LENGTH)} characters`,
+      ),
+    GOOGLE_CLIENT_ID: z.string().min(1).optional(),
+    GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
+    GITHUB_CLIENT_ID: z.string().min(1).optional(),
+    GITHUB_CLIENT_SECRET: z.string().min(1).optional(),
+    TRUSTED_ORIGINS: z
+      .string()
+      .optional()
+      .transform((v) => (v ? v.split(',').map((s) => s.trim()) : [])),
+  })
+  .refine(
+    (env) =>
+      (!env.GOOGLE_CLIENT_ID && !env.GOOGLE_CLIENT_SECRET) ||
+      (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET),
+    {
+      message: 'Both GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set together',
+    },
+  )
+  .refine(
+    (env) =>
+      (!env.GITHUB_CLIENT_ID && !env.GITHUB_CLIENT_SECRET) ||
+      (env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET),
+    {
+      message: 'Both GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET must be set together',
+    },
+  )
 
 type EnvSchema = typeof envSchema
 

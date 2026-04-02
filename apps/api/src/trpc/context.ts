@@ -107,12 +107,14 @@ const adminProcedure = authedProcedure.use(async (opts) => {
 })
 
 /**
- * Dev-only procedure — rejects with 403 if role is not 'dev'.
+ * Dev procedure — rejects with 403 if role is not 'dev' or 'admin'.
+ * Admin is a superset of dev access.
  * Requires authentication first.
  */
 // eslint-disable-next-line @typescript-eslint/typedef
 const devProcedure = authedProcedure.use(async (opts) => {
-  if (opts.ctx.user.role !== 'dev') {
+  const role: string | undefined = opts.ctx.user.role
+  if (role !== 'dev' && role !== 'admin') {
     throw new TRPCError({
       code: 'FORBIDDEN',
       message: 'Developer access required',
