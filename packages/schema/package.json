@@ -15,13 +15,13 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "drizzle-orm": "^0.38.0",
+    "drizzle-orm": "^0.38.4",
     "drizzle-zod": "^0.7.1",
     "zod": "^3.24.0"
   },
   "devDependencies": {
-    "@voiler/config-ts": "workspace:*",
     "@types/node": "^22.0.0",
+    "@voiler/config-ts": "workspace:*",
     "typescript": "^5.7.0"
   }
 }

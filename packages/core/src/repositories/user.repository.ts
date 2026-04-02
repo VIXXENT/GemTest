@@ -5,11 +5,14 @@ import type { AppError } from '../errors/app-error'
 
 /**
  * Data required to persist a new user.
+ *
+ * @remarks
+ * Passwords are handled by Better Auth in the `account` table.
+ * This interface only covers user profile data.
  */
 export interface CreateUserData {
   readonly name: string
   readonly email: string
-  readonly passwordHash: string
   readonly role?: string
 }
 

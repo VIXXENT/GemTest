@@ -35,7 +35,6 @@ interface Container {
     params: {
       name: string
       email: string
-      password: string
     } & AuditableParams,
   ) => ResultAsync<UserEntity, AppError>
   readonly getUser: (
@@ -79,7 +78,6 @@ const createContainer: (params: CreateContainerParams) => Container = (params) =
   // --- Use Cases (raw) ---
   const rawCreateUser: Container['createUser'] = createCreateUser({
     userRepository,
-    passwordService,
   })
 
   const rawGetUser: Container['getUser'] = createGetUser({

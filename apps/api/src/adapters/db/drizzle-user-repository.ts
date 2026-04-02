@@ -72,10 +72,12 @@ const createDrizzleUserRepository: (
       db
         .insert(User)
         .values({
+          id: crypto.randomUUID(),
           name: data.name,
           email: data.email,
-          passwordHash: data.passwordHash,
           role: data.role ?? 'user',
+          createdAt: new Date(),
+          updatedAt: new Date(),
         })
         .returning(),
       (cause) =>
@@ -215,31 +217,16 @@ const createDrizzleUserRepository: (
  * Create a function that retrieves a user's password hash by email.
  *
  * @remarks
- * Separated from IUserRepository to avoid exposing password
- * hashes through the domain entity. Used only by the
- * authenticate use case.
+ * DEPRECATED: With Better Auth, passwords are stored in the
+ * `account` table, not the `user` table. This stub returns
+ * null and will be removed when the manual auth flow is
+ * retired in favor of Better Auth routes.
  */
 const createFindPasswordHash: (
   params: CreateDrizzleUserRepositoryParams,
-) => (params: { email: string }) => ResultAsync<string | null, AppError> = (repoParams) => {
-  const { db } = repoParams
-
-  return (queryParams) => {
-    return ResultAsync.fromPromise(
-      db
-        .select({ passwordHash: User.passwordHash })
-        .from(User)
-        .where(eq(User.email, queryParams.email)),
-      (cause) =>
-        infrastructureError({
-          message: 'Failed to find password hash',
-          cause,
-        }),
-    ).map((rows) => {
-      const first: { passwordHash: string } | undefined = rows[0]
-
-      return first?.passwordHash ?? null
-    })
+) => (params: { email: string }) => ResultAsync<string | null, AppError> = (_repoParams) => {
+  return (_queryParams) => {
+    return okAsync(null)
   }
 }
 

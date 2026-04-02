@@ -4,6 +4,8 @@ import { Hono } from 'hono'
 import { bodyLimit } from 'hono/body-limit'
 import { cors } from 'hono/cors'
 
+import { createAuth } from './auth/index.js'
+import './auth/types.js'
 import { createContainer } from './container.js'
 import { createDb } from './db/index.js'
 import { createHealthRoute } from './http/index.js'
@@ -55,6 +57,17 @@ const allowedOrigins: string[] =
   env.NODE_ENV === 'development' ? ['http://localhost:3000', 'http://localhost:4000'] : []
 
 /**
+ * Create the Better Auth instance.
+ * Handles authentication routes at /api/auth/*.
+ */
+// eslint-disable-next-line @typescript-eslint/typedef
+const auth = createAuth({
+  db,
+  secret: env.AUTH_SECRET,
+  trustedOrigins: allowedOrigins,
+})
+
+/**
  * Create and configure the Hono application.
  *
  * Middleware order matters:
@@ -73,6 +86,7 @@ const app = new Hono()
 app.use('*', createRateLimiter())
 // Stricter rate limit for auth endpoints (5 req/min)
 app.use('/trpc/auth.*', createRateLimiter({ windowMs: 60_000, max: 5 }))
+app.use('/api/auth/*', createRateLimiter({ windowMs: 60_000, max: 10 }))
 app.use('*', requestLogger())
 app.use('*', securityHeaders())
 app.use(
@@ -95,6 +109,23 @@ app.use(
     },
   }),
 )
+
+// --- Better Auth routes ---
+app.on(['POST', 'GET'], '/api/auth/**', (c) => {
+  return auth.handler(c.req.raw)
+})
+
+// --- Session extraction middleware ---
+// eslint-disable-next-line max-params
+app.use('*', async (c, next) => {
+  // eslint-disable-next-line @typescript-eslint/typedef
+  const session = await auth.api.getSession({
+    headers: c.req.raw.headers,
+  })
+  c.set('user', session?.user ?? null)
+  c.set('session', session?.session ?? null)
+  await next()
+})
 
 // --- Routes ---
 // eslint-disable-next-line @typescript-eslint/typedef

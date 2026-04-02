@@ -15,7 +15,6 @@ interface CreateUserRouterParams {
   readonly createUser: (params: {
     name: string
     email: string
-    password: string
     requestId?: string
     userId?: string
   }) => ResultAsync<UserEntity, AppError>
@@ -91,7 +90,6 @@ const createUserRouter: (params: CreateUserRouterParams) => ReturnType<typeof ro
       const result: Awaited<ReturnType<typeof createUser>> = await createUser({
         name: opts.input.name,
         email: opts.input.email,
-        password: opts.input.password,
       })
 
       return result.match(
@@ -100,7 +98,7 @@ const createUserRouter: (params: CreateUserRouterParams) => ReturnType<typeof ro
       )
     }),
 
-    getById: publicProcedure.input(z.object({ id: z.string().uuid() })).query(async (opts) => {
+    getById: publicProcedure.input(z.object({ id: z.string().min(1) })).query(async (opts) => {
       const result: Awaited<ReturnType<typeof getUser>> = await getUser({ id: opts.input.id })
 
       return result.match(

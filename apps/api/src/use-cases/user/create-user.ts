@@ -1,4 +1,4 @@
-import type { AppError, IPasswordService, IUserRepository } from '@voiler/core'
+import type { AppError, IUserRepository } from '@voiler/core'
 import type { UserEntity } from '@voiler/domain'
 import type { ResultAsync } from 'neverthrow'
 
@@ -7,40 +7,43 @@ import type { ResultAsync } from 'neverthrow'
  */
 interface CreateUserDeps {
   readonly userRepository: IUserRepository
-  readonly passwordService: IPasswordService
 }
 
 /**
  * Parameters for creating a new user.
+ *
+ * @remarks
+ * Password handling is managed by Better Auth via its
+ * own signup endpoint. This use case creates the user
+ * profile only (admin-level user creation).
  */
 interface CreateUserParams {
   readonly name: string
   readonly email: string
-  readonly password: string
 }
 
 /**
  * Factory that builds a use case for creating a new user.
  *
- * Hashes the password and delegates persistence to the
- * repository. Duplicate-email detection is handled by
- * the database unique constraint (repository returns
- * InfrastructureError).
+ * Delegates persistence to the repository.
+ * Duplicate-email detection is handled by the database
+ * unique constraint (repository returns InfrastructureError).
+ *
+ * @remarks
+ * Passwords are managed by Better Auth — this use case
+ * only handles user profile creation.
  */
 export const createCreateUser: (
   deps: CreateUserDeps,
 ) => (params: CreateUserParams) => ResultAsync<UserEntity, AppError> = (deps) => (params) => {
-  const { userRepository, passwordService } = deps
-  const { name, email, password } = params
+  const { userRepository } = deps
+  const { name, email } = params
 
-  return passwordService.hash({ plaintext: password }).andThen((passwordHash) =>
-    userRepository.create({
-      data: {
-        name,
-        email,
-        passwordHash,
-        role: 'user',
-      },
-    }),
-  )
+  return userRepository.create({
+    data: {
+      name,
+      email,
+      role: 'user',
+    },
+  })
 }

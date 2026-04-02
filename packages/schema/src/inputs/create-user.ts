@@ -1,19 +1,19 @@
 import { z } from 'zod'
 
 /**
- * Zod schema for validating user registration input.
- * Used as the single source of truth for the create-user tRPC procedure.
+ * Zod schema for validating admin user creation input.
+ * Used as the single source of truth for the create-user
+ * tRPC procedure.
+ *
+ * @remarks
+ * Password handling is managed by Better Auth via its own
+ * signup endpoint. This schema is for admin-level user
+ * profile creation only.
  */
 // eslint-disable-next-line @typescript-eslint/typedef
 const CreateUserInputSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
   email: z.string().email('Invalid email address'),
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .max(128, 'Password must not exceed 128 characters')
-    .regex(/[a-zA-Z]/, 'Password must contain at least one letter')
-    .regex(/[0-9]/, 'Password must contain at least one digit'),
 })
 
 /**
