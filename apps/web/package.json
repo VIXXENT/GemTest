@@ -1,0 +1,35 @@
+{
+  "name": "@voiler/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev --port 3000",
+    "build": "vite build",
+    "start": "node .output/server/index.mjs",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.0.0",
+    "@tanstack/react-router": "^1.168.0",
+    "@tanstack/react-start": "^1.167.0",
+    "@trpc/client": "^11.16.0",
+    "@trpc/react-query": "^11.16.0",
+    "better-auth": "^1.5.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.0",
+    "vite": "^8.0.0"
+  },
+  "devDependencies": {
+    "@trpc/server": "^11.16.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@voiler/api": "workspace:*",
+    "@playwright/test": "^1.52.0",
+    "@voiler/config-ts": "workspace:*",
+    "typescript": "^5.7.0"
+  }
+}

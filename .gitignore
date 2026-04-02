@@ -3,6 +3,7 @@ node_modules/
 
 # Build output
 dist/
+.output/
 
 # Turbo
 .turbo/
@@ -29,8 +30,15 @@ logs/
 # Database
 drizzle/meta/
 
+# Generated
+*.gen.ts
+*.timestamp_*
+
 # Test
 coverage/
+test-results/
+playwright-report/
+blob-report/
 
 # Docker
 .docker/
