@@ -1,5 +1,6 @@
 import { authClient } from '~/lib/auth'
 
+// TODO: i18n — replace hardcoded strings with t() calls
 /**
  * Banner displayed at the top of the page when an admin
  * is impersonating another user. Shows the impersonated

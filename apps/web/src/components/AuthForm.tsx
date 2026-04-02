@@ -8,6 +8,7 @@ interface AuthFormProps {
   readonly mode: 'login' | 'register'
 }
 
+// TODO: i18n — replace hardcoded strings with t() calls
 /** Reusable authentication form for login and registration. */
 const AuthForm = ({ mode }: AuthFormProps) => {
   const [name, setName] = useState('')

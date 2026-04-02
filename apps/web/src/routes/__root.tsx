@@ -3,6 +3,7 @@ import { Outlet, createRootRoute } from '@tanstack/react-router'
 
 import { ImpersonationBanner } from '~/components/ImpersonationBanner'
 import { NavBar } from '~/components/NavBar'
+import { I18nProvider } from '~/lib/i18n'
 import { createTrpcClient, trpc } from '~/lib/trpc'
 import '~/styles.css'
 
@@ -18,13 +19,15 @@ const RootLayout = () => (
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   <trpc.Provider client={trpcClient} queryClient={queryClient}>
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-gray-50">
-        <ImpersonationBanner />
-        <NavBar />
-        <main className="container mx-auto px-4 py-8">
-          <Outlet />
-        </main>
-      </div>
+      <I18nProvider>
+        <div className="min-h-screen bg-gray-50">
+          <ImpersonationBanner />
+          <NavBar />
+          <main className="container mx-auto px-4 py-8">
+            <Outlet />
+          </main>
+        </div>
+      </I18nProvider>
     </QueryClientProvider>
     {/* @ts-expect-error — tRPC Provider collision */}
   </trpc.Provider>

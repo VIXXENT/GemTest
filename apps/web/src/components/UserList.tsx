@@ -8,6 +8,7 @@ interface UserRow {
   readonly role: string
 }
 
+// TODO: i18n — replace hardcoded strings with t() calls
 /** Displays a table of users fetched via tRPC. */
 const UserList = () => {
   /* eslint-disable
