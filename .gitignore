@@ -3,6 +3,7 @@ node_modules/
 
 # Build output
 dist/
+.output/
 
 # Turbo
 .turbo/
@@ -28,6 +29,10 @@ logs/
 
 # Database
 drizzle/meta/
+
+# Generated
+*.gen.ts
+*.timestamp_*
 
 # Test
 coverage/

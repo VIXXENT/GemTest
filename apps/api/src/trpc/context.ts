@@ -5,18 +5,21 @@ import type { DbClient } from '../db/index.js'
 
 /**
  * tRPC context available to all procedures.
- *
- * The index signature satisfies the `Record<string, unknown>`
- * constraint required by `@hono/trpc-server`.
  */
 interface TRPCContext {
-  readonly [key: string]: unknown
   readonly db: DbClient
   readonly requestId: string
   readonly user: AuthUser | null
   readonly session: AuthSession | null
   readonly headers: Headers
 }
+
+/**
+ * TRPCContext extended with an index signature so it
+ * satisfies `Record<string, unknown>` required by
+ * `@hono/trpc-server`. Used only at the adapter boundary.
+ */
+type HonoTRPCContext = TRPCContext & Record<string, unknown>
 
 /**
  * tRPC context with guaranteed non-null user and session.
@@ -42,7 +45,7 @@ interface CreateContextParams {
 /**
  * Create a tRPC context from the Hono request.
  */
-const createContext: (params: CreateContextParams) => TRPCContext = (params) => ({
+const createContext: (params: CreateContextParams) => HonoTRPCContext = (params) => ({
   db: params.db,
   requestId: params.requestId,
   user: params.user,
@@ -126,4 +129,4 @@ const devProcedure = authedProcedure.use(async (opts) => {
 
 export { createContext, router, publicProcedure }
 export { authedProcedure, adminProcedure, devProcedure }
-export type { TRPCContext, AuthedTRPCContext, CreateContextParams }
+export type { TRPCContext, HonoTRPCContext, AuthedTRPCContext, CreateContextParams }
