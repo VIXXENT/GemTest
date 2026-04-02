@@ -18,6 +18,43 @@ services:
       retries: 5
       start_period: 10s
 
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      target: builder
+    container_name: voiler-api
+    ports:
+      - '4000:4000'
+    environment:
+      NODE_ENV: development
+      PORT: '4000'
+      DATABASE_URL: 'postgresql://voiler:voiler_dev@db:5432/voiler_dev'
+      AUTH_SECRET: 'dev-secret-at-least-32-characters-long-ok'
+    volumes:
+      - './apps/api/src:/app/apps/api/src'
+      - './packages:/app/packages'
+    command: 'pnpm --filter @voiler/api dev'
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      target: builder
+    container_name: voiler-web
+    ports:
+      - '3000:3000'
+    environment:
+      VITE_API_URL: 'http://localhost:4000'
+    volumes:
+      - './apps/web/src:/app/apps/web/src'
+    command: 'pnpm --filter @voiler/web dev -- --host 0.0.0.0'
+    depends_on:
+      - api
+
 volumes:
   voiler_pgdata:
     driver: local

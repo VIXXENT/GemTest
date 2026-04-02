@@ -17,7 +17,8 @@
     "test": "turbo run test",
     "test:e2e": "playwright test --config apps/web/playwright.config.ts",
     "db:up": "docker compose up db -d",
-    "db:down": "docker compose down"
+    "db:down": "docker compose down",
+    "preview": "docker compose -f docker-compose.prod.yml up --build"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
