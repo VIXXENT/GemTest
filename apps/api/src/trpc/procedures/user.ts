@@ -6,7 +6,7 @@ import { CreateUserInputSchema } from '@voiler/schema'
 import type { ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 
-import { publicProcedure, router } from '../context.js'
+import { authedProcedure, publicProcedure, router } from '../context.js'
 
 /**
  * Dependencies for the user router factory.
@@ -98,7 +98,7 @@ const createUserRouter: (params: CreateUserRouterParams) => ReturnType<typeof ro
       )
     }),
 
-    getById: publicProcedure.input(z.object({ id: z.string().min(1) })).query(async (opts) => {
+    getById: authedProcedure.input(z.object({ id: z.string().min(1) })).query(async (opts) => {
       const result: Awaited<ReturnType<typeof getUser>> = await getUser({ id: opts.input.id })
 
       return result.match(
@@ -116,7 +116,7 @@ const createUserRouter: (params: CreateUserRouterParams) => ReturnType<typeof ro
       )
     }),
 
-    list: publicProcedure.query(async () => {
+    list: authedProcedure.query(async () => {
       const result: Awaited<ReturnType<typeof listUsers>> = await listUsers()
 
       return result.match(
