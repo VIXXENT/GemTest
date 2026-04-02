@@ -277,6 +277,15 @@ Better Auth integration with Hono server, database session management, social OA
 
 Plan B complete — tRPC router working, User CRUD functional, container wired.
 
+### Security Debt from Plan B (MUST resolve)
+
+These blockers from Plan B code review (#45, #46, #47, #48) MUST be addressed:
+
+1. **Auth timing oracle + enumeration (#45):** Dummy hash on user-not-found, single generic "Invalid credentials" error for all auth failures
+2. **Brute-force rate limit on auth (#46):** 5 req/min on auth endpoints (security plan contract)
+3. **tRPC error sanitization (#47):** Return generic message for InfrastructureError, not raw details
+4. **Wire withAuditLog in container (#48):** Wrap all use cases with audit logging
+
 ### Exit State
 
 - `POST /api/auth/sign-up` creates user via Better Auth

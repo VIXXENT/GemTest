@@ -7,7 +7,10 @@ import { z } from 'zod'
 // eslint-disable-next-line @typescript-eslint/typedef
 const LoginInputSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(1, 'Password is required'),
+  password: z
+    .string()
+    .min(1, 'Password is required')
+    .max(128, 'Password must not exceed 128 characters'),
 })
 
 /**

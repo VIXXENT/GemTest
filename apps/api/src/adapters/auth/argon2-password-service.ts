@@ -12,11 +12,18 @@ import { ResultAsync } from 'neverthrow'
  */
 const createArgon2PasswordService: () => IPasswordService = () => {
   const hash: IPasswordService['hash'] = (params) => {
-    return ResultAsync.fromPromise(argon2.hash(params.plaintext), (cause) =>
-      infrastructureError({
-        message: 'Failed to hash password',
-        cause,
+    return ResultAsync.fromPromise(
+      argon2.hash(params.plaintext, {
+        type: argon2.argon2id,
+        memoryCost: 65536,
+        timeCost: 3,
+        parallelism: 1,
       }),
+      (cause) =>
+        infrastructureError({
+          message: 'Failed to hash password',
+          cause,
+        }),
     )
   }
 

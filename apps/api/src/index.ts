@@ -129,6 +129,8 @@ serve(
     console.warn(`[api] Environment: ${env.NODE_ENV}`)
 
     // Fire-and-forget audit log cleanup on startup
-    void cleanupAuditLog({ db })
+    void cleanupAuditLog({ db }).catch((cleanupErr: unknown) => {
+      console.error('[api] Audit log cleanup failed:', cleanupErr)
+    })
   },
 )

@@ -15,6 +15,7 @@ interface CreatePasswordParams {
 }
 
 const MIN_LENGTH: number = 8
+const MAX_LENGTH: number = 128
 const HAS_LETTER: RegExp = /[a-zA-Z]/
 const HAS_DIGIT: RegExp = /\d/
 
@@ -33,7 +34,11 @@ export const createPassword: (params: CreatePasswordParams) => Result<Password, 
   const { value } = params
 
   if (value.length < MIN_LENGTH) {
-    return err(invalidPassword(`Password must be at least ${String(MIN_LENGTH)}` + ' characters'))
+    return err(invalidPassword(`Password must be at least ${String(MIN_LENGTH)} characters`))
+  }
+
+  if (value.length > MAX_LENGTH) {
+    return err(invalidPassword(`Password must not exceed ${String(MAX_LENGTH)} characters`))
   }
 
   if (!HAS_LETTER.test(value) || !HAS_DIGIT.test(value)) {
