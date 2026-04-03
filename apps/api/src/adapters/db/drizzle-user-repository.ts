@@ -104,12 +104,17 @@ const createDrizzleUserRepository: (
     })
   }
 
-  const findAll: IUserRepository['findAll'] = () => {
-    return ResultAsync.fromPromise(db.select().from(User), (cause) =>
-      infrastructureError({
-        message: 'Failed to fetch users',
-        cause,
-      }),
+  const findAll: IUserRepository['findAll'] = (findAllParams) => {
+    const { pagination } = findAllParams
+    const offset: number = (pagination.page - 1) * pagination.pageSize
+
+    return ResultAsync.fromPromise(
+      db.select().from(User).limit(pagination.pageSize).offset(offset),
+      (cause) =>
+        infrastructureError({
+          message: 'Failed to fetch users',
+          cause,
+        }),
     ).andThen((rows) => {
       const mapped: ResultAsync<UserEntity, AppError>[] = rows.map((row) => mapRowToEntity({ row }))
 

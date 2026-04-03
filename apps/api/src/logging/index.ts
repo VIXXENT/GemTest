@@ -11,7 +11,7 @@
  * - AuditLog: Drizzle table definition
  */
 
-export { AuditLog, writeAuditLog } from './audit-log.repository.js'
+export { AuditLog, writeAuditLog, writeAuditLogAsync } from './audit-log.repository.js'
 export type { AuditLogEntry, WriteAuditLogParams } from './audit-log.repository.js'
 
 export { requestLogger } from './request-logger.js'

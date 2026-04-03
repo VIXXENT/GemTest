@@ -68,6 +68,35 @@ const createSessionRouter: (params: CreateSessionRouterParams) => ReturnType<typ
     }),
 
     revoke: authedProcedure.input(RevokeSessionInputSchema).mutation(async (opts) => {
+      // Validate session ownership: fetch all user sessions
+      // and confirm the target token belongs to this user.
+      const isAdmin: boolean = opts.ctx.user.role === 'admin'
+
+      if (!isAdmin) {
+        try {
+          const userSessions: SessionRecord[] = await listSessions({
+            headers: opts.ctx.headers,
+          })
+
+          const ownsSession: boolean = userSessions.some((s) => s.token === opts.input.token)
+
+          if (!ownsSession) {
+            throw new TRPCError({
+              code: 'FORBIDDEN',
+              message: 'Cannot revoke a session you do not own',
+            })
+          }
+        } catch (error: unknown) {
+          if (error instanceof TRPCError) {
+            throw error
+          }
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Failed to validate session ownership',
+          })
+        }
+      }
+
       try {
         const result: { status: boolean } = await revokeSession({
           headers: opts.ctx.headers,

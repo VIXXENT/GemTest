@@ -1,25 +1,6 @@
-import { jsonb, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { AuditLog } from '@voiler/schema'
 
 import type { DbClient } from '../db/index.js'
-
-/**
- * Audit log table for tracking use-case executions
- * and request-level actions across the application.
- */
-
-const AuditLog = pgTable('audit_log', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  requestId: text('request_id').notNull(),
-  action: text('action').notNull(),
-  userId: text('user_id'),
-  entityId: text('entity_id'),
-  metadata: jsonb('metadata'),
-  createdAt: timestamp('created_at', {
-    withTimezone: true,
-  })
-    .notNull()
-    .defaultNow(),
-})
 
 /**
  * Entry data for writing an audit log record.
@@ -71,5 +52,22 @@ const writeAuditLog: (params: WriteAuditLogParams) => void = (params) => {
     })
 }
 
-export { AuditLog, writeAuditLog }
+/**
+ * Write an audit log entry and await the result.
+ * Use for critical actions (e.g. impersonation) where
+ * the audit record must be persisted before responding.
+ */
+const writeAuditLogAsync: (params: WriteAuditLogParams) => Promise<void> = async (params) => {
+  const { db, entry } = params
+
+  await db.insert(AuditLog).values({
+    requestId: entry.requestId,
+    action: entry.action,
+    userId: entry.userId ?? null,
+    entityId: entry.entityId ?? null,
+    metadata: entry.metadata ?? null,
+  })
+}
+
+export { AuditLog, writeAuditLog, writeAuditLogAsync }
 export type { AuditLogEntry, WriteAuditLogParams }

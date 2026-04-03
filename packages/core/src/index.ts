@@ -13,5 +13,6 @@ export { infrastructureError, validationError } from './errors/app-error'
 export type {
   CreateUserData,
   IUserRepository,
+  PaginationParams,
   UpdateUserData,
 } from './repositories/user.repository'

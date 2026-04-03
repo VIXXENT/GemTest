@@ -39,10 +39,27 @@ const createAuth = (params: CreateAuthParams) => {
     githubClientSecret,
   } = params
 
+  const isProduction: boolean = process.env.NODE_ENV === 'production'
+
   const auth = betterAuth({
     database: drizzleAdapter(db, { provider: 'pg' }),
     secret,
     trustedOrigins,
+    session: {
+      cookieCache: {
+        enabled: true,
+        maxAge: 300,
+      },
+    },
+    advanced: {
+      cookiePrefix: 'voiler',
+      defaultCookieAttributes: {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: 'lax',
+        path: '/',
+      },
+    },
     emailAndPassword: {
       enabled: true,
     },

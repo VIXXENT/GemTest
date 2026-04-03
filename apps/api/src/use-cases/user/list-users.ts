@@ -1,4 +1,4 @@
-import type { AppError, IUserRepository } from '@voiler/core'
+import type { AppError, IUserRepository, PaginationParams } from '@voiler/core'
 import type { UserEntity } from '@voiler/domain'
 import type { ResultAsync } from 'neverthrow'
 
@@ -10,11 +10,22 @@ interface ListUsersDeps {
 }
 
 /**
- * Factory that builds a use case for retrieving all users.
+ * Parameters for the listUsers use case.
  */
-export const createListUsers: (deps: ListUsersDeps) => () => ResultAsync<UserEntity[], AppError> =
-  (deps) => () => {
-    const { userRepository } = deps
+interface ListUsersParams {
+  readonly pagination: PaginationParams
+}
 
-    return userRepository.findAll()
-  }
+/**
+ * Factory that builds a use case for retrieving users
+ * with pagination.
+ */
+export const createListUsers: (
+  deps: ListUsersDeps,
+) => (params: ListUsersParams) => ResultAsync<UserEntity[], AppError> = (deps) => (params) => {
+  const { userRepository } = deps
+
+  return userRepository.findAll({
+    pagination: params.pagination,
+  })
+}

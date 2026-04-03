@@ -10,6 +10,7 @@ const DEFAULT_MAX_REQUESTS = 100
 interface RateLimiterConfig {
   windowMs?: number
   max?: number
+  keyPrefix?: string
 }
 
 /**
@@ -22,6 +23,7 @@ interface RateLimiterConfig {
 const createRateLimiter = (config?: RateLimiterConfig): MiddlewareHandler => {
   const windowMs: number = config?.windowMs ?? DEFAULT_WINDOW_MS
   const max: number = config?.max ?? DEFAULT_MAX_REQUESTS
+  const prefix: string = config?.keyPrefix ?? 'global'
 
   const limiter = rateLimiter({
     windowMs,
@@ -33,7 +35,8 @@ const createRateLimiter = (config?: RateLimiterConfig): MiddlewareHandler => {
 
       // Use last IP in X-Forwarded-For (set by the trusted reverse proxy)
       const ips = forwardedFor?.split(',').map((ip) => ip.trim())
-      return ips?.at(-1) ?? realIp ?? '127.0.0.1'
+      const ip: string = ips?.at(-1) ?? realIp ?? '127.0.0.1'
+      return `${prefix}:${ip}`
     },
   })
 
