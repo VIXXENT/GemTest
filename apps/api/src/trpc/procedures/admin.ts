@@ -46,6 +46,13 @@ const createAdminRouter: (params: CreateAdminRouterParams) => ReturnType<typeof 
 
   const adminRouter = router({
     impersonate: adminProcedure.input(ImpersonateInputSchema).mutation(async (opts) => {
+      if (opts.ctx.user.id === opts.input.userId) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Cannot impersonate yourself',
+        })
+      }
+
       try {
         await impersonateUser({
           headers: opts.ctx.headers,

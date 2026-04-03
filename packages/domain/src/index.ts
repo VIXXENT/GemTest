@@ -29,4 +29,4 @@ export type { UserId } from './value-objects/user-id'
 export { createUserId } from './value-objects/user-id'
 
 // Entities
-export type { UserEntity } from './entities/user'
+export type { UserEntity, UserRole } from './entities/user'

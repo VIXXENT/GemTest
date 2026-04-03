@@ -1,6 +1,6 @@
 import type { AppError, IUserRepository } from '@voiler/core'
 import { infrastructureError } from '@voiler/core'
-import type { DomainError, Email, UserEntity, UserId } from '@voiler/domain'
+import type { DomainError, Email, UserEntity, UserId, UserRole } from '@voiler/domain'
 import { createEmail, createUserId } from '@voiler/domain'
 import { eq } from 'drizzle-orm'
 import type { Result } from 'neverthrow'
@@ -43,11 +43,15 @@ const mapRowToEntity: (params: { row: UserRow }) => ResultAsync<UserEntity, AppE
     return errAsync(emailResult.error)
   }
 
+  // The DB constrains role via Zod validation on insert;
+  // Drizzle text() infers as string so we narrow here.
+  const role: UserRole = row.role === 'admin' || row.role === 'dev' ? row.role : 'user'
+
   const entity: UserEntity = {
     id: idResult.value,
     email: emailResult.value,
     name: row.name,
-    role: row.role,
+    role,
     createdAt: row.createdAt,
   }
 

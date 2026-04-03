@@ -167,7 +167,13 @@ type CleanPackageJsonParams = {
 const cleanPackageJson = ({ scope }: CleanPackageJsonParams): void => {
   const pkgPath: string = join(ROOT, 'package.json')
   const content: string = readFileSync(pkgPath, 'utf-8')
-  const pkg = JSON.parse(content)
+  let pkg: Record<string, unknown>
+  try {
+    pkg = JSON.parse(content) as Record<string, unknown>
+  } catch {
+    console.error(`Failed to parse ${pkgPath} — ensure it is valid JSON.`)
+    process.exit(1)
+  }
 
   if (pkg.scripts) {
     delete pkg.scripts['init-project']

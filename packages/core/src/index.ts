@@ -15,7 +15,3 @@ export type {
   IUserRepository,
   UpdateUserData,
 } from './repositories/user.repository'
-
-// Service ports
-export type { IPasswordService } from './services/password.service'
-export type { ITokenService, TokenPayload } from './services/token.service'

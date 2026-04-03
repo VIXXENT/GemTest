@@ -43,6 +43,10 @@ const mapErrorCode: (params: { tag: AppError['tag'] }) => TRPCError['code'] = (p
       return 'BAD_REQUEST'
     case 'InfrastructureError':
       return 'INTERNAL_SERVER_ERROR'
+    default: {
+      const _exhaustive: never = params.tag
+      return _exhaustive
+    }
   }
 }
 

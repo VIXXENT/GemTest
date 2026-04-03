@@ -116,7 +116,7 @@ const adminProcedure = authedProcedure.use(async (opts) => {
  */
 
 const devProcedure = authedProcedure.use(async (opts) => {
-  const role: string | undefined = opts.ctx.user.role
+  const role = opts.ctx.user.role
   if (role !== 'dev' && role !== 'admin') {
     throw new TRPCError({
       code: 'FORBIDDEN',

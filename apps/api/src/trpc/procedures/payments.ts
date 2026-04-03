@@ -33,6 +33,10 @@ const createPaymentRouter = (params: CreatePaymentRouterParams) => {
         )
       }),
 
+    // TODO: Real Stripe integration MUST verify the
+    // webhook signature (Stripe-Signature header) before
+    // processing events. Without verification, any caller
+    // can forge webhook payloads.
     webhook: publicProcedure
       .input(
         z.object({

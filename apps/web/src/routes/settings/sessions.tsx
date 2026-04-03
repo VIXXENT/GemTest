@@ -74,6 +74,9 @@ const SessionsPage = () => {
     if (params.ua === null || params.ua === '') {
       return 'Unknown device'
     }
+    if (params.ua.includes('Edg')) {
+      return 'Edge'
+    }
     if (params.ua.includes('Chrome')) {
       return 'Chrome'
     }
@@ -82,9 +85,6 @@ const SessionsPage = () => {
     }
     if (params.ua.includes('Safari')) {
       return 'Safari'
-    }
-    if (params.ua.includes('Edge')) {
-      return 'Edge'
     }
     return 'Browser'
   }

@@ -10,7 +10,7 @@ const PublicUserSchema = z.object({
   id: z.string(),
   name: z.string(),
   email: z.string().email(),
-  role: z.string(),
+  role: z.enum(['admin', 'dev', 'user']),
   createdAt: z.date(),
 })
 

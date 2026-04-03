@@ -1,4 +1,4 @@
-import type { Email, UserEntity } from '@voiler/domain'
+import type { Email, UserEntity, UserRole } from '@voiler/domain'
 import type { ResultAsync } from 'neverthrow'
 
 import type { AppError } from '../errors/app-error'
@@ -13,7 +13,7 @@ import type { AppError } from '../errors/app-error'
 export interface CreateUserData {
   readonly name: string
   readonly email: string
-  readonly role?: string
+  readonly role?: UserRole
 }
 
 /**
@@ -22,7 +22,7 @@ export interface CreateUserData {
 export interface UpdateUserData {
   readonly name?: string
   readonly email?: string
-  readonly role?: string
+  readonly role?: UserRole
 }
 
 /**
