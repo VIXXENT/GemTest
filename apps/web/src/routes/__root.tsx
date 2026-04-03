@@ -34,9 +34,9 @@ const RootLayout = () => {
               <Outlet />
             </main>
           </div>
+          <DevMenu />
         </I18nProvider>
       </QueryClientProvider>
-      <DevMenu />
       {/* @ts-expect-error — tRPC Provider collision */}
     </trpc.Provider>
   )

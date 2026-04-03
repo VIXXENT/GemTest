@@ -57,11 +57,11 @@ const interpolate = (args: {
   const { template, params } = args
   const entries: [string, string][] = Object.entries(params)
 
-  let result: string = template
-  for (const entry of entries) {
-    result = result.replace(`{${entry[0]}}`, entry[1])
-  }
-  return result
+  return entries.reduce(
+    // eslint-disable-next-line max-params
+    (acc: string, entry: [string, string]) => acc.replace(`{${entry[0]}}`, entry[1]),
+    template,
+  )
 }
 
 /**

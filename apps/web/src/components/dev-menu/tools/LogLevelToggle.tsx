@@ -28,7 +28,11 @@ const readLevels = (): LogLevels => {
   if (raw === null) {
     return DEFAULT_LEVELS
   }
-  return JSON.parse(raw) as LogLevels
+  try {
+    return JSON.parse(raw) as LogLevels
+  } catch {
+    return DEFAULT_LEVELS
+  }
 }
 
 /** Write log levels to localStorage. */

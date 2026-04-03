@@ -31,7 +31,7 @@ export const weakPassword: (message: string) => DomainError = (message) => ({
 })
 
 /** Create an InvalidUserId domain error. */
-export const invalidUserId = (message: string): DomainError => ({
+export const invalidUserId: (message: string) => DomainError = (message) => ({
   tag: 'InvalidUserId',
   message,
 })

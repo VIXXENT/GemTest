@@ -1,8 +1,6 @@
+import type { AppError } from '@voiler/core'
 import { okAsync, type ResultAsync } from 'neverthrow'
 import type { EmailMessage, EmailResult } from './types.js'
-
-/** Application error shape used across the domain. */
-type AppError = { readonly tag: string; readonly message: string }
 
 /**
  * Port interface for email sending operations.
