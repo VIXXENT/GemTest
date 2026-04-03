@@ -92,8 +92,15 @@ const app = new Hono()
 
 // --- Middleware ---
 app.use('*', createRateLimiter())
-// Stricter rate limit for auth endpoints (10 req/min)
-app.use('/api/auth/*', createRateLimiter({ windowMs: 60_000, max: 10 }))
+// Stricter rate limit for auth endpoints (10 req/min per IP)
+app.use(
+  '/api/auth/*',
+  createRateLimiter({
+    windowMs: 60_000,
+    max: 10,
+    keyPrefix: 'auth',
+  }),
+)
 app.use('*', requestLogger())
 app.use('*', securityHeaders())
 app.use(
@@ -150,7 +157,7 @@ const appRouter = createAppRouter({
   user: {
     createUser: container.createUser,
     getUser: container.getUser,
-    listUsers: container.listUsers,
+    listUsers: (p) => container.listUsers({ pagination: p.pagination }),
   },
   session: {
     listSessions: (p) => auth.api.listSessions({ headers: p.headers }),

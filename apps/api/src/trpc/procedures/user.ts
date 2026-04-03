@@ -1,8 +1,12 @@
 import { TRPCError } from '@trpc/server'
 import type { AppError } from '@voiler/core'
 import type { UserEntity } from '@voiler/domain'
-import type { PublicUser } from '@voiler/schema'
-import { CreateUserInputSchema } from '@voiler/schema'
+import {
+  CreateUserInputSchema,
+  PaginationInputSchema,
+  type PaginationInput,
+  type PublicUser,
+} from '@voiler/schema'
 import type { ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 
@@ -23,7 +27,9 @@ interface CreateUserRouterParams {
     requestId?: string
     userId?: string
   }) => ResultAsync<UserEntity | null, AppError>
-  readonly listUsers: () => ResultAsync<UserEntity[], AppError>
+  readonly listUsers: (params: {
+    pagination: PaginationInput
+  }) => ResultAsync<UserEntity[], AppError>
 }
 
 /**
@@ -120,8 +126,12 @@ const createUserRouter: (params: CreateUserRouterParams) => ReturnType<typeof ro
       )
     }),
 
-    list: adminProcedure.query(async () => {
-      const result: Awaited<ReturnType<typeof listUsers>> = await listUsers()
+    list: adminProcedure.input(PaginationInputSchema.optional()).query(async (opts) => {
+      const pagination: PaginationInput = opts.input ?? {
+        page: 1,
+        pageSize: 20,
+      }
+      const result: Awaited<ReturnType<typeof listUsers>> = await listUsers({ pagination })
 
       return result.match(
         (entities) => entities.map((entity) => mapToPublicUser({ entity })),

@@ -20,12 +20,17 @@ export type { UserSelect, UserInsert } from './entities/user.js'
 
 export { Session, Account, Verification } from './entities/auth.js'
 
+export { AuditLog } from './entities/audit-log.js'
+
 // --- Inputs (tRPC procedure validation) ---
 export { CreateUserInputSchema } from './inputs/create-user.js'
 export type { CreateUserInput } from './inputs/create-user.js'
 
 export { UpdateUserInputSchema } from './inputs/update-user.js'
 export type { UpdateUserInput } from './inputs/update-user.js'
+
+export { PaginationInputSchema } from './inputs/pagination.js'
+export type { PaginationInput } from './inputs/pagination.js'
 
 // --- Outputs (client-safe response schemas) ---
 export { PublicUserSchema } from './outputs/public-user.js'

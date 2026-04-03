@@ -53,6 +53,9 @@ const envSchema = z
       message: 'Both GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET must be set together',
     },
   )
+  .refine((env) => env.NODE_ENV !== 'production' || env.TRUSTED_ORIGINS.length > 0, {
+    message: 'TRUSTED_ORIGINS is required in production',
+  })
 
 type EnvSchema = typeof envSchema
 

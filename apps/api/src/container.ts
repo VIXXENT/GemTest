@@ -36,7 +36,9 @@ interface Container {
   readonly getUser: (
     params: { id: string } & AuditableParams,
   ) => ResultAsync<UserEntity | null, AppError>
-  readonly listUsers: () => ResultAsync<UserEntity[], AppError>
+  readonly listUsers: (params: {
+    pagination: { page: number; pageSize: number }
+  }) => ResultAsync<UserEntity[], AppError>
   // [MODULE:payments] readonly paymentService: IPaymentService
   // [MODULE:email] readonly emailService: IEmailService
 }

@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-import { writeAuditLog } from '../../logging/index.js'
+import { writeAuditLogAsync } from '../../logging/index.js'
 import { adminProcedure, authedProcedure, router } from '../context.js'
 
 /**
@@ -65,7 +65,7 @@ const createAdminRouter: (params: CreateAdminRouterParams) => ReturnType<typeof 
         })
       }
 
-      writeAuditLog({
+      await writeAuditLogAsync({
         db: opts.ctx.db,
         entry: {
           requestId: opts.ctx.requestId,
@@ -93,7 +93,7 @@ const createAdminRouter: (params: CreateAdminRouterParams) => ReturnType<typeof 
         })
       }
 
-      writeAuditLog({
+      await writeAuditLogAsync({
         db: opts.ctx.db,
         entry: {
           requestId: opts.ctx.requestId,

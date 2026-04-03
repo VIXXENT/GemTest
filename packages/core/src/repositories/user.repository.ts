@@ -26,6 +26,14 @@ export interface UpdateUserData {
 }
 
 /**
+ * Pagination parameters for list queries.
+ */
+export interface PaginationParams {
+  readonly page: number
+  readonly pageSize: number
+}
+
+/**
  * Port interface for user persistence.
  *
  * Adapters (e.g. Drizzle) implement this contract.
@@ -35,8 +43,8 @@ export interface IUserRepository {
   /** Persist a new user record. */
   create: (params: { data: CreateUserData }) => ResultAsync<UserEntity, AppError>
 
-  /** Retrieve all users. */
-  findAll: () => ResultAsync<UserEntity[], AppError>
+  /** Retrieve users with pagination. */
+  findAll: (params: { pagination: PaginationParams }) => ResultAsync<UserEntity[], AppError>
 
   /** Find a user by their unique identifier. */
   findById: (params: { id: string }) => ResultAsync<UserEntity | null, AppError>
