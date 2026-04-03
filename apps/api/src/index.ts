@@ -186,6 +186,8 @@ const appRouter = createAppRouter({
         headers: p.headers,
       }),
   },
+  // [MODULE:payments] payment: { paymentService: container.paymentService },
+  // [MODULE:email] email: { emailService: container.emailService },
 })
 
 const trpcRoute = createTrpcRoute({

@@ -280,6 +280,21 @@ const main = async (): Promise<void> => {
       rmSync(procedureFile, { force: true })
       console.log(`  Removed procedure ${moduleName}.ts`)
     }
+
+    // Remove workspace dependency from apps/api/package.json
+    const apiPkgPath: string = join(ROOT, 'apps/api/package.json')
+    if (existsSync(apiPkgPath)) {
+      const apiPkgContent: string = readFileSync(apiPkgPath, 'utf-8')
+      const modPkgName = `${scope}/mod-${moduleName}`
+      const updated: string = apiPkgContent
+        .split('\n')
+        .filter((line) => !line.includes(modPkgName))
+        .join('\n')
+      if (updated !== apiPkgContent) {
+        writeFileSync(apiPkgPath, updated, 'utf-8')
+        console.log(`  Removed ${modPkgName} from api dependencies`)
+      }
+    }
   }
 
   // If no modules selected, remove modules/* from workspace
